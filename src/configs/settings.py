@@ -21,11 +21,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'applications.blog',
-    'applications.product',
-    'applications.order',
-    'applications.about',
-    'applications.account',
+    'furbar',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

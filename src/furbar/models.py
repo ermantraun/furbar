@@ -41,7 +41,7 @@ class User(AbstractUser):
 User.email.validators = EmailValidator
 
 #не забыть: добавить наследование категорий
-class Categorie(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=120, unique=True, )
     
     
@@ -60,7 +60,7 @@ class Product(models.Model):
         expression="SUBSTRING(MD5(CONCAT('product_', CAST(id AS CHAR))), 1, 8)",
         output_field=models.CharField(max_length=8, unique=True), 
     )
-    categories = models.ManyToManyField(Categorie)
+    categories = models.ManyToManyField(Category)
     reviews = models.ManyToManyField(User, through="ProductReview")
     
 class Rating(models.Model):
@@ -68,7 +68,7 @@ class Rating(models.Model):
     rating = models.PositiveIntegerField(validators=['Rating']['rating'])
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     
-class FavoriteProduct(models.MOdel):
+class FavoriteProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     count = models.SmallIntegerField()
