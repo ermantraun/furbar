@@ -1,0 +1,70 @@
+/*--
+/*  4.14 - Team CSS
+/*----------------------------------------*/
+
+
+// Team Wrapper
+.team-wrapper{
+    padding-top: 14px;
+}
+
+// Single Team
+.single-team{
+    margin-top: 30px;
+
+    & .team-images{
+        overflow: hidden;
+
+        & img{
+            width: 100%;
+            transition: $transition-base;
+        }
+    }
+    & .team-content{
+        text-align: center;
+        padding-top: 22px;
+
+        & .name{
+            font-size: 24px;
+            font-weight: 600;
+            color: #4c5c76;
+            text-transform: uppercase;
+            margin-bottom: 0;
+
+            @media #{$small-mobile}{
+                font-size: 20px;
+            }
+        }
+        & .designation{
+            font-size: 18px;
+            font-weight: 600;
+            font-family: $headings-font-family;
+            color: #656565;
+            text-transform: uppercase;
+
+            @media #{$small-mobile}{
+                font-size: 16px;
+            }
+        }
+    }
+
+    &:hover{
+        & .team-images{    
+            & img{
+                transform: scale(1.1) rotate(3deg);
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+

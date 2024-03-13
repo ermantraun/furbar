@@ -1,0 +1,138 @@
+/*--
+/*  4.7 - Blog CSS
+/*----------------------------------------*/
+
+// Blog top Wrapper
+.blog-top-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+// Blog Items Wrapper
+.blog-items-wrapper{}
+
+
+// Single Blog 
+.single-blog{
+    margin-top: 50px;
+
+    & > a{
+        display: block;
+
+        & img{
+            width: 100%;
+        }
+    }
+    & .gallery-active{
+        position: relative;
+
+        & a{
+            display: block;
+
+            & img{
+                width: 100%;
+            }
+        }
+
+        & .swiper-button-next,
+        & .swiper-button-prev{
+            margin-top: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border: 1px solid #ededed;
+            display: block;
+            color: #ededed;
+            border-radius: 50%;
+            font-size: 28px;
+            transition: $transition-base;
+            outline: none;
+            transform: translateY(-50%);
+
+            &:hover{
+                color: $white;
+                background-color: $primary;
+                border-color: $primary;
+            }
+
+            &::after{
+                display: none;
+            }
+        }
+
+        & .swiper-button-prev{}
+    }
+    & .blog-embed{
+        height: 100%;
+
+        & .ratio-16x9 {
+            --bs-aspect-ratio: calc(9.35 / 15 * 100%);
+        }        
+    }
+    & .blog-content{
+        padding-top: 28px;
+
+        & .blog-meta{
+            display: flex;
+
+            & li{
+                font-size: 15px;
+                font-weight: 500;
+                color: #545454;
+                font-family: $headings-font-family;
+                display: inherit;
+
+                & i{
+                    font-size: 18px;
+                    color: $black;
+                    margin-right: 8px;
+                }
+                
+                & + li{
+                    margin-left: 20px;
+                }
+                & a{}
+            }
+        }
+        & .title{
+            margin-bottom: 0;
+
+            & a{
+                margin-top: 10px;
+                display: inline-block;
+                color: #383838;
+                font-weight: 600;
+                font-size: 24px;
+                line-height: 1.4;
+
+                @media #{$desktop-device, $small-mobile}{
+                    font-size: 20px;
+                }
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+        & p{
+            margin-top: 15px;
+            margin-bottom: 0;
+        }
+        & .btn{
+            height: 40px;
+            line-height: 40px;
+            padding: 0 20px;
+            margin-top: 30px;
+        }
+    }
+}
+
+
+// Blog Wrapper
+.blog-wrapper{}
+
+

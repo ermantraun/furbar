@@ -1,0 +1,49 @@
+/*--
+/*  2.2 - Blockquote CSS
+/*----------------------------------------*/
+
+blockquote {
+    position: relative;
+    margin-bottom: 0;
+    padding-left: 35px;
+    margin-top: 40px;
+
+    &::before{
+        position: absolute;
+        content: '';
+        width: 2px;
+        height: 100%;
+        background-color: $primary;
+        top: 0;
+        left: 0;
+    }
+
+    & p {
+        font-size: 18px;
+        font-style: italic;
+        font-weight: 400 !important;
+        line-height: 1.83;
+        color: #6c788c;
+        margin-bottom: 0;
+        margin-top: 0 !important;
+    }
+    & .blockquote-name{
+        font-size: 20px;
+        font-weight: 600;
+        color: #6c788c;
+        padding-left: 40px;
+        position: relative;
+        margin-top: 22px;
+
+        &::before{
+            position: absolute;
+            content: '';
+            width: 30px;
+            height: 2px;
+            background-color: $primary;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+    }
+}

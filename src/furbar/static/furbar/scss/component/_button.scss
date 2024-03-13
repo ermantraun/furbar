@@ -1,0 +1,76 @@
+/*--
+/*  2.1 - Button CSS
+/*----------------------------------------*/
+
+.btn {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    @media #{$large-mobile}{
+        font-size: 14px;
+    }
+
+    &::before{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: $transition-base;
+        transform: scaleX(0);
+    }
+
+    & i{
+        margin-left: 8px;
+    }
+
+    &:hover{
+        &::before{
+            transform: scaleX(1);
+        }
+    }
+}
+@each $name, $value in $theme-colors {  
+    .btn-#{$name} {
+
+        @if $name == light {
+            color: $dark;
+        } @else if $name == warning {
+            color: $dark;
+        }@else if $name == info {
+            color: $dark;
+        } @else {
+            color: $white;
+        }
+    } 
+    .btn-hover-#{$name} {
+        &:hover {
+            border-color: $value;
+
+            &::before{
+                background-color: $value;
+            }            
+
+            @if $name == light {
+                color: $dark;
+            } @else if $name == warning {
+                color: $dark;
+            } @else {
+                color: $white;
+            }
+        }
+    }
+    .btn-outline-#{$name} {
+        border: 1px solid $value;
+        color: $value;
+
+        &:hover {
+            background: $value;
+        }
+    }
+}

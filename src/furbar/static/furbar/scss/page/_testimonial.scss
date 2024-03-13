@@ -1,0 +1,87 @@
+/*--
+/*  4.14 - Testimonial CSS
+/*----------------------------------------*/
+
+
+// Testimonial Wrapper 
+.testimonial-wrapper{
+    max-width: 830px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+
+// Single Testimonial 
+.single-testimonial{
+    text-align: center;
+
+    & .quote{}
+    & p{
+        font-size: 18px;
+        font-weight: 500;
+        font-family: $headings-font-family;
+        color: #4d4d4d;
+        line-height: 1.7;
+        margin-top: 30px;
+        margin-bottom: 0;
+    }
+    & .author-thumb{       
+        border-radius: 50%;
+        margin-top: 40px;
+    }
+    & .name{
+        font-size: 16px;
+        font-weight: 600;
+        color: #313131;
+        text-transform: uppercase;
+        margin-bottom: 0;
+        margin-top: 25px;
+    }
+    & .designation{
+        font-family: $headings-font-family;
+        font-weight: 500;
+        font-size: 14px;
+        color: #656565;
+        display: block;
+        text-transform: uppercase;
+    }
+}
+
+
+// Testimonial Active
+.testimonial-active{
+    & .swiper-pagination{
+        bottom: 0px;
+        position: relative;
+        margin-top: 35px;
+        height: 18px;
+
+        & .swiper-pagination-bullet{
+            outline: none;            
+            background-color: #393939;
+            transition: $transition-base;
+            opacity: 1;
+            width: 16px;
+            height: 10px;
+            display: inline-block;
+            margin: 0 5px;
+            border-radius: 50px;
+
+            &.swiper-pagination-bullet-active{
+                background-color: $primary;
+                width: 25px;
+            }
+        }
+    }    
+}
+
+
+
+
+
+
+
+
+
+
+

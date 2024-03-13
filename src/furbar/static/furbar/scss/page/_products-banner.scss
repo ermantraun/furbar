@@ -1,0 +1,123 @@
+/*--
+/*  4.6 - Products Banner CSS
+/*----------------------------------------*/
+
+// Product Banner 
+.products-banner{}
+
+
+// Single Product Banner 
+.single-products-banner{
+    position: relative;
+    overflow: hidden;
+
+    & img{
+        width: 100%;
+    }
+    & .products-banner-content{
+        position: absolute;
+        padding: 10px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        transform: translateY(100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: $transition-base;
+
+        & .banner-content-wrapper{
+            background-color: rgba($white, 0.9);
+            padding: 20px 30px;
+            padding-right: 50px;
+            position: relative;
+
+            @media #{$desktop-device, $large-mobile}{
+                padding: 10px 15px;
+            }
+
+            & .title{
+                margin-bottom: 0;
+
+                & a{
+                    font-size: 30px;
+                    font-weight: 700;
+                    color: #343434;
+                    transition: $transition-base;
+
+                    @media #{$desktop-device, $large-mobile}{
+                        font-size: 26px;
+                    }
+
+                    &:hover{
+                        color: $primary;
+                    }
+                }
+            }
+            & .products-count{
+                font-family: $headings-font-family;
+                font-size: 24px;
+                color: #343434;
+                display: block;
+                line-height: 1.2;
+                margin-top: 3px;
+
+                @media #{$desktop-device, $large-mobile}{
+                    font-size: 20px;
+                }
+            }
+            & .arrow{
+                width: 40px;
+                height: 40px;
+                line-height: 43px;
+                text-align: center;
+                border-radius: 50%;
+                background-color: $primary;
+                display: inline-block;
+                font-size: 36px;
+                color: $white;
+                transition: $transition-base;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                right: 30px;
+
+                @media #{$desktop-device, $large-mobile}{
+                    width: 35px;
+                    height: 35px;
+                    line-height: 38px;
+                    right: 15px;
+                    font-size: 30px;
+                }
+
+                &:hover{
+                    background-color: $dark;
+                    color: $white;
+                }
+            }
+        }
+    }
+
+    &:hover{
+        & .products-banner-content{
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

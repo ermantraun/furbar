@@ -1,0 +1,100 @@
+/*--
+/*  5.1 - Footer Widget CSS
+/*----------------------------------------*/
+
+// Footer Widget Section 
+.footer-widget-section{
+    background-color: #f1eee5;
+    padding-top: 30px;
+    padding-bottom: 75px;
+}
+
+// Footer Widget Title
+.footer-widget-title{
+    color: $secondary;
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 0px;
+    padding-bottom: 10px;
+}
+
+// Footer Widget 
+.footer-widget{
+    margin-top: 45px;
+    
+    & .widget-about{
+        & p{
+            padding-top: 3px;
+
+            & a{
+                font-weight: 500;
+                font-size: 22px;
+                color: $secondary;
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+    }
+
+    & .widget-social{
+        padding-top: 20px;
+
+        & ul{
+            display: flex;
+
+            & li{
+                & + li{
+                    margin-left: 30px;
+                }
+                & a{
+                    font-size: 16px;
+                    color: $secondary;
+                    transition: $transition-base;
+
+                    &:hover{
+                        color: $primary;
+                    }
+                }
+            }
+        }
+    }
+
+    & .footer-link{
+        & li{
+            margin-top: 3px;
+
+            & a{
+                font-size: 16px;
+                color: #6d707f;
+                transition: $transition-base;
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+    }    
+}
+
+// Footer Widget Link 
+.footer-widget-link{
+    display: flex;
+    justify-content: space-around;
+
+    @media #{$tablet-device, $large-mobile}{
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    & .footer-widget{
+        @media #{$tablet-device, $large-mobile}{
+            width: 50%;
+        }
+        @media #{$small-mobile}{
+            width: 100%;
+        }
+    }
+}
+

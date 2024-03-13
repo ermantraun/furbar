@@ -1,0 +1,289 @@
+/*----------------------------------------*/
+/*  01. Template default CSS
+/*----------------------------------------*/
+
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+    &:-moz-placeholder {
+        @content;
+    }
+    &::-moz-placeholder {
+        @content;
+    }
+    &:-ms-input-placeholder {
+        @content;
+    }
+}
+
+/*-- Google Font --*/
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Rajdhani:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
+
+
+/*-- Common Style --*/
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+html,
+body {
+    height: 100%;
+}
+body {
+    position: relative;
+    outline: none;
+    visibility: visible;
+    overflow-X: hidden;
+
+    color: "";
+    &[dir="rtl"] {
+        text-align: right;
+    }
+}
+
+
+
+a,
+button {
+    transition: $transition-base;
+    outline: 0;
+
+    &:focus{
+        outline: 0;
+    }
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+p{
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+p:last-child{
+    margin-bottom: 0;
+}
+
+ul,ol{
+    padding: 0;
+    list-style: none;
+    margin: 0;
+}
+
+img{
+    max-width: 100%;
+}
+
+/* Section Style */
+.section,
+.main-wrapper {
+    float: left;
+    width: 100%;
+}
+
+
+/* Section Padding */
+.section-padding{
+    padding-top: 100px;
+    padding-bottom: 100px;
+   
+    @media #{$tablet-device}{
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+    @media #{$large-mobile}{
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+}
+
+.section-padding-02{
+    padding-top: 100px;
+    
+    @media #{$tablet-device}{
+        padding-top: 80px;
+    }
+    @media #{$large-mobile}{
+        padding-top: 60px;
+    }
+}
+
+
+/* Section Padding */
+.section-title{
+    & .title{
+        font-size: 30px;
+        font-weight: 700;
+        color: #444;
+        margin-bottom: 0;
+
+        @media #{$desktop-device}{
+            font-size: 24px;
+        }
+    }
+}
+.section-title-02{
+    & .title{
+        font-size: 36px;
+        font-weight: 700;
+        color: #131313;
+        margin-bottom: 0;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+
+        @media #{$desktop-device}{
+            font-size: 24px;
+        }
+    }
+}
+
+.section-title-03{
+    & .sub-title{
+        font-size: 18px;
+        font-family: $font-family-base;
+        font-weight: 400;
+        text-transform: uppercase;
+        color: #8b8b8b;
+        margin-bottom: 0;
+
+        @media #{$large-mobile}{
+            font-size: 16px;
+        }
+    }
+    & .title{
+        font-size: 48px;
+        font-weight: 600;
+        color: #4c5c76;
+        margin-bottom: 0;
+        margin-top: 5px;
+        text-transform: uppercase;
+
+        @media #{$desktop-device}{
+            font-size: 40px;
+        }
+        @media #{$large-mobile}{
+            font-size: 36px;
+        }
+        @media #{$small-mobile}{
+            font-size: 26px;
+        }
+    }
+}
+
+
+/* tab Content */
+.tab-content{
+    & .tab-pane{
+        display: block;
+        overflow: hidden;
+        height: 0;
+        visibility: hidden;
+        max-width: 100%;
+        opacity: 0;
+        
+        &.active{
+            height: auto;
+            visibility: visible;
+            opacity: 1;
+            overflow: visible;
+        }
+    }
+}
+
+// Swiper Arrows
+.swiper-arrows{
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    & .swiper-button-next,
+    & .swiper-button-prev{
+        position: relative;
+        top: 0;
+        margin-top: 0;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border: 1px solid #ededed;
+        display: block;
+        left: 0;
+        right: 0;
+        margin: 0 3px;
+        color: #ededed;
+        border-radius: 50%;
+        font-size: 28px;
+        transition: $transition-base;
+        outline: none;
+
+        &:hover{
+            color: $white;
+            background-color: $primary;
+            border-color: $primary;
+        }
+
+        &::after{
+            display: none;
+        }
+    }
+
+    & .swiper-button-prev{}
+}
+
+// BG Color 01
+.bg-color-01{
+    background-color: #f8f8f8;
+}
+// BG Color 02
+.bg-color-02{
+    background-color: #eaeaea;
+}
+
+
+// Page Pagination
+.page-pagination{}
+
+.pagination{
+    margin-top: 60px;
+
+    & .page-item{
+        margin: 0 6px;
+
+        & .page-link{
+            font-weight: 400;
+            color: $black;
+            padding: 0;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            background: #f6f6f6;
+            font-size: 14px;
+            display: inline-block;
+            text-align: center;
+            vertical-align: top;
+            border: 0;
+            transition: all 0.3s linear;
+
+            @media #{$small-mobile}{
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+            }
+
+            &:hover,
+            &.active{
+                background-color: $primary;
+                color: $white;
+            }
+        }
+    }
+}
+
+
+
+

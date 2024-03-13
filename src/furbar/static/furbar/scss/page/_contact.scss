@@ -1,0 +1,214 @@
+/*--
+/*  4.23 - Contact CSS
+/*----------------------------------------*/
+
+// Contact Wrapper 
+.contact-wrapper{
+    background-color: #f5f5f5;
+}
+
+
+// Contact Info
+.contact-info{
+    background-color: #fff9ed;
+    padding: 55px 40px 60px;
+    height: 100%;
+    position: relative;
+
+    @media #{$desktop-device}{
+        padding: 55px 30px 60px;
+    }
+    @media #{$tablet-device}{
+        padding: 55px 40px 200px;
+    }
+    @media #{$large-mobile}{
+        padding: 55px 40px 150px;
+    }
+    @media #{$small-mobile}{
+        padding: 55px 25px 150px;
+    }
+
+    & .title{
+        font-size: 36px;
+        font-weight: 700;
+        text-transform: uppercase;
+        position: relative;
+        color: #383838;
+        margin-bottom: 0;  
+        padding-left: 1rem;
+
+        @media #{$desktop-device}{
+            font-size: 30px;
+        }
+        @media #{$small-mobile}{
+            font-size: 24px;
+        }
+
+        &::before{
+            position: absolute;
+            content: '';
+            width: 4px;
+            height: 22px;
+            background-color: $primary;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+    }
+    & > p{
+        margin-bottom: 0;
+        font-weight: 300;
+        margin-top: 10px;
+    }
+    & .social{
+        display: flex;
+        margin-top: 25px;
+
+        & li{
+            & + li{
+                margin-left: 10px;
+            }
+            & a{
+                display: block;
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                text-align: center;
+                font-size: 16px;
+                background-color: #ffedc8;
+                color: #6c788c;
+                border-radius: 50%;
+
+                &:hover{
+                    background-color: $primary;
+                    color: $white;
+                }
+            }
+        }
+    }
+    & img{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+}
+
+// Contact Info Items
+.contact-info-items{
+    padding-top: 15px;
+    
+    & .single-contact-info{
+        display: flex;
+        border: 1px solid transparent;
+        padding: 8px 20px;
+        transition: $transition-base;
+
+        @media #{$small-mobile}{
+            padding: 8px 15px;
+        }
+
+        & .info-icon{
+            & i{
+                font-size: 30px;
+                color: $primary;
+
+                @media #{$desktop-device, $small-mobile}{
+                    font-size: 24px;
+                }
+            }
+        }
+        & .info-content{
+            padding-left: 15px;
+            flex: 1;
+
+            & p{
+                font-family: $headings-font-family;
+                font-weight: 600;
+                font-size: 18px;
+                color: #6c788c;
+                margin-bottom: 0;
+
+                @media #{$desktop-device}{
+                    font-size: 16px;
+                }
+                @media #{$small-mobile}{
+                    font-size: 14px;
+                }
+            }
+        }
+
+        &:hover{
+            border-color: #ffedc8;
+        }
+    }
+}
+
+
+// Contact Form 
+.contact-form{
+    padding: 60px;
+    padding-top: 30px;
+
+    @media #{$small-mobile}{
+        padding: 30px;
+        padding-top: 0px;
+    }
+
+    & .single-form{
+        & input:not([type="checkbox"]):not([type="radio"]),
+        & textarea{
+            background-color: transparent;
+        }
+        & textarea{
+            height: 145px;
+        }
+        & .btn{
+            height: 60px;
+            line-height: 60px;
+            padding: 0 50px;
+            font-size: 14px;
+            font-weight: 500;
+
+            @media #{$small-mobile}{
+                height: 50px;
+                line-height: 50px;
+                padding: 0 30px;
+            }
+        }
+    }
+}
+
+// Form Message 
+.form-message{
+    margin-bottom: 0;
+
+    &.error,
+    &.success {
+        font-size:16px;
+        color:#07294d;
+        background:#ddd;
+        padding:10px 15px;
+        margin: 15px 0 0 15px;
+    }
+    &.error {
+        color:#ff0000
+    }
+}
+
+// Contact Map 
+.contact-map{
+
+    & iframe{
+        width: 100%;
+        height: 490px;
+        display: block;
+
+        @media #{$desktop-device, $tablet-device, $large-mobile}{
+            
+        }
+        @media #{$small-mobile}{
+           
+        }
+    }
+}

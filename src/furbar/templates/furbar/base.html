@@ -1,0 +1,475 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %} {% endblock %}</title>
+    <meta name="robots" content="noindex, follow" />
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'furbar/images/favicon.png' %}">
+
+    <!-- CSS
+	============================================ -->
+
+    <!-- Icon Font CSS -->
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/pe-icon-7-stroke.css' %}">
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/font-awesome.min.css' %}">
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/odometer.min.css' %}">
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'furbar/css/plugins/ion.rangeSlider.min.css' %}">
+
+    <!-- Main Style CSS -->
+    <link rel="stylesheet" href="{% static 'furbar/css/style.css' %}">
+</head>
+
+<body>
+<!-- Header Start  -->
+<div class="header-area header-sticky d-none d-lg-block">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-3">
+                <!-- Начало логотипа -->
+                <div class="header-logo">
+                    <a href="{% url 'index' %}"><img src="{% static 'furbar/images/logo.png' %}" alt="Логотип"></a>
+                </div>
+                <!-- Конец логотипа -->
+            </div>
+            <div class="col-lg-6">
+                <div class="header-menu">
+                    <ul class="nav-menu">
+                        <li>
+                            <a href="{% url 'index' %}">Главная</a>
+                        </li>
+                        <li><a href="{% url 'about' %}">О нас</a></li>
+                        <li>
+                            <a href="{% url 'shop' %}">Магазин</a>
+                            
+                        </li>
+                        
+                        <li>
+                            <a href="{% url 'blog' %}">Блог</a>
+                            
+                        </li>
+                        <li><a href="{% url 'contacts' %}">Контакты</a></li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <!-- Начало Метаданных заголовка -->
+                <div class="header-meta">
+
+                    <div class="dropdown">
+                        <a class="action" href="#" role="button" data-bs-toggle="dropdown"> <i class="pe-7s-search"></i> </a>
+
+                        <div class="dropdown-menu dropdown-search">
+                            <!-- Начало поиска заголовка -->
+                            <div class="header-search">
+                                <form action="#">
+                                    <input type="text" placeholder="Введите ключевое слово для поиска... ">
+                                    <button><i class="pe-7s-search"></i></button>
+                                </form>
+                            </div>
+                            <!-- Конец поиска заголовка -->
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <a class="action" href="#" role="button" data-bs-toggle="dropdown"><i class="pe-7s-user"></i></a>
+
+                        <ul class="dropdown-menu dropdown-profile">
+                            {% if request.user.is_authenticated %}
+                            <li><a href="{% url 'profile' %}">Мой аккаунт</a></li>
+                            <li><a href="{% url 'profile' %}">Выйти</a></li>
+                            {% else %}
+                            <li><a href="">Войти</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <a class="action" href=""><i class="pe-7s-like"></i></a>
+
+                    <div class="dropdown">
+                        <a class="action" href="{% url 'basket' %}" >
+                            <i class="pe-7s-shopbag"></i>
+                            <span class="number">{{ basket_products_count }}</span>
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+                <!-- Конец Метаданных заголовка -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Header End -->
+
+<!-- Header Mobile Start -->
+<div class="header-mobile section d-lg-none">
+
+    <!-- Header Mobile top Start -->
+    <div class="header-mobile-top header-sticky">
+        <div class="container">
+            <div class="row row-cols-3 gx-2 align-items-center">
+                <div class="col">
+
+                    <!-- Header Toggle Start -->
+                    <div class="header-toggle">
+                        <button class="mobile-menu-open">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                    <!-- Header Toggle End -->
+
+                </div>
+                <div class="col">
+
+                    <!-- Header Logo Start -->
+                    <div class="header-logo text-center">
+                        <a href="{% url 'index' %}"><img src="{% static 'furbar/images/logo.png' %}" alt="Logo"></a>
+                    </div>
+                    <!-- Header Logo End -->
+
+                </div>
+                <div class="col">
+
+                    <!-- Header Action Start -->
+                    <div class="header-meta">
+                        <div class="dropdown">
+                            <a class="action" href="#" role="button" data-bs-toggle="dropdown"><i class="pe-7s-user"></i></a>
+
+                            <ul class="dropdown-menu dropdown-profile">
+                                <li><a href="{% url 'profile' %}">My Account</a></li>
+                                <li><a href="">Checkout</a></li>
+                                <li><a href="">Sign In</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <a class="action" href="{% url 'basket' %}" >
+                                <i class="pe-7s-shopbag"></i>
+                                <span class="number">{{ basket_products_count }}</span>
+                            </a>
+                            
+                           
+                        </div>
+                    </div>
+                    <!-- Header Action End -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header Mobile top End -->
+
+    <!-- Header Mobile Bottom End -->
+    <div class="header-mobile-bottom">
+        <div class="container">
+
+            <!-- Header Search Start -->
+            <div class="header-search">
+                <form action="#">
+                    <input type="text" placeholder="Enter your search key ... ">
+                    <button><i class="pe-7s-search"></i></button>
+                </form>
+            </div>
+            <!-- Header Search End -->
+
+        </div>
+    </div>
+    <!-- Header Mobile Bottom End -->
+
+</div>
+<!-- Header Mobile End -->
+
+<!-- off Canvas Start -->
+<div class="off-canvas-box">
+
+    <!-- Canvas Action Start -->
+    <div class="canvas-action">
+        <a class="action" href=""><i class="icon-sliders"></i> Compare <span class="action-num">(3)</span></a>
+        <a class="action" href=""><i class="icon-heart"></i> Wishlist <span class="action-num">(3)</span></a>
+    </div>
+    <!-- Canvas Action end -->
+
+    <!-- Canvas Close bar Start -->
+    <div class="canvas-close-bar">
+        <span>Menu</span>
+        <a class="menu-close" href="javascript:;"><i class="pe-7s-angle-left"></i></a>
+    </div>
+    <!-- Canvas Close bar End -->
+
+    <!-- Canvas Menu Start -->
+    <div class="canvas-menu">
+        <nav>
+            <ul class="nav-menu">
+                <li>
+                    <a href="#">Home</a>
+                    <ul class="sub-menu">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        
+                    </ul>
+                </li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li>
+                    <a href="#">Shop</a>
+                    <ul class="mega-sub-menu">
+                        <li>
+                            <a href="#" >Shop Grid</a>
+
+                            
+                        </li>
+                        <li>
+                            <a href="#" >Shop List</a>
+
+                            
+                        </li>
+                        <li>
+                            <a href="#">Shop Single</a>
+
+                            
+                        </li>
+                        <li>
+                            <a href="#">Page</a>
+
+                           
+                        </li>
+
+                        <li class="manu-banner">
+                            <a href="#"><img src="{% static 'furbar/images/banner-menu-01.jpg' %}" alt=""></a>
+                        </li>
+                        <li class="manu-banner">
+                            <a href="#"><img src="{% static 'furbar/images/banner-menu-02.jpg' %}" alt=""></a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Pages </a>
+                    <ul class="sub-menu">
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="">Cart</a></li>
+                        <li><a href="">Compare</a></li>
+                        <li><a href="">Wishlist</a></li>
+                        <li><a href="">Empty Cart</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="{% url 'profile' %}">My Account</a></li>
+                        <li><a href="">Login</a></li>
+                        <li><a href="">Register</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Blog</a>
+                    
+                </li>
+                <li><a href="{% url 'contacts' %}">contacts</a></li>
+            </ul>
+
+        </nav>
+    </div>
+    <!-- Canvas Menu End -->
+
+</div>
+<!-- off Canvas End -->
+
+<div class="menu-overlay"></div>
+
+
+{% block content %} {% endblock content %}
+
+<!-- Footer Section Start -->
+<div class="section footer-section">
+
+    <!-- Footer Top Start -->
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-2 col-md-4">
+
+                    <!-- Footer Logo Start -->
+                    <div class="footer-logo">
+                        <a href="index.html"><img src="{% static 'furbar/images/logo.png' %}" alt="Logo"></a>
+                    </div>
+                    <!-- Footer Logo End -->
+
+                </div>
+                <div class="col-xl-5 col-md-8">
+
+                    <!-- Footer contacts & Payment End -->
+                    <div class="footer-contact-payment">
+                        <div class="footer-contact">
+                            <div class="contact-icon">
+                                <img src="{% static 'furbar/images/icon/icon-4.png' %}" alt="Icon">
+                            </div>
+
+                            <div class="contact-content">
+                                <h6 class="title">Call Us:</h6>
+                                <p>00 123 456 789</p>
+                            </div>
+                        </div>
+                        <div class="footer-payment">
+                            <img src="{% static 'furbar/images/payment.png' %}" alt="Payment">
+                        </div>
+                    </div>
+                    <!-- Footer contacts & Payment End -->
+
+                </div>
+                <div class="col-xl-5 ">
+
+                    <!-- Footer Subscribe End -->
+                    <div class="footer-subscribe">
+                        <span class="title">Subscribe Now :</span>
+                        <div class="subscribe-form">
+                            <form action="{% url 'mailing' %}" method="POST">
+                                <input type="text" name="email" placeholder="Your Mail">
+                                <button type="submit"><i class="pe-7s-paper-plane"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Footer Subscribe End -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer Top End -->
+
+    <!-- Footer Widget Section Start -->
+    <div class="footer-widget-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+
+                    <!-- Footer Widget Start -->
+                    <div class="footer-widget">
+                        <h4 class="footer-widget-title">Customer Service</h4>
+
+                        <ul class="footer-link">
+                            <li><a href="#">Payment Methods</a></li>
+                            <li><a href="#">Money-back guarantee!</a></li>
+                            <li><a href="#">Returns-Shipping</a></li>
+                            <li><a href="#">Terms and conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <!-- Footer Widget End -->
+
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <!-- Footer Widget Start -->
+                    <div class="footer-widget">
+                        <h4 class="footer-widget-title">Information</h4>
+
+                        <ul class="footer-link">
+                            <li><a href="#">About Furbar</a></li>
+                            <li><a href="#">How to Shop</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">contacts us</a></li>
+                            <li><a href="#">Log in</a></li>
+                        </ul>
+                    </div>
+                    <!-- Footer Widget End -->
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <!-- Footer Widget Start -->
+                    <div class="footer-widget">
+                        <h4 class="footer-widget-title">My Account</h4>
+
+                        <ul class="footer-link">
+                            <li><a href="#">Sign In</a></li>
+                            <li><a href="#">View Cart</a></li>
+                            <li><a href="#">My Wishlist</a></li>
+                            <li><a href="#">Track My Order</a></li>
+                            <li><a href="#">Help</a></li>
+                        </ul>
+                    </div>
+                    <!-- Footer Widget End -->
+                </div>
+                <div class="col-lg-2 col-md-5 col-sm-6">
+                    <!-- Footer Widget Start -->
+                    <div class="footer-widget">
+                        <h4 class="footer-widget-title">Our Stores</h4>
+
+                        <ul class="footer-link">
+                            <li><a href="#">New aYork</a></li>
+                            <li><a href="#">London SF</a></li>
+                            <li><a href="#">Cockfosters BP</a></li>
+                            <li><a href="#">Los Angeles</a></li>
+                            <li><a href="#">Chicago</a></li>
+                        </ul>
+                    </div>
+                    <!-- Footer Widget End -->
+                </div>
+                <div class="col-lg-3 col-md-7">
+                    <!-- Footer Widget Start -->
+                    <div class="footer-widget">
+                        <h4 class="footer-widget-title">About Us</h4>
+
+                        <div class="widget-about">
+                            <p>Lorem ipsum dolor sit amet consect adipisicing elit sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                        </div>
+                        <div class="widget-social">
+                            <ul>
+                                <li><a href="#"><i class="ion-social-twitter"></i></a></li>
+                                <li><a href="#"><i class="ion-social-tumblr"></i></a></li>
+                                <li><a href="#"><i class="ion-social-facebook"></i></a></li>
+                                <li><a href="#"><i class="ion-social-instagram-outline"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Footer Widget End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer Widget End -->
+
+
+</div>
+<!-- Footer Section End -->
+
+<!--Back To Start-->
+<a href="#" class="back-to-top">
+    <i class="pe-7s-angle-up"></i>
+</a>
+<!--Back To End-->
+
+ <!-- JS
+    ============================================ -->
+
+<!-- Modernizer & jQuery JS -->
+<script src="{% static 'furbar/js/vendor/modernizr-3.11.2.min.js' %}"></script>
+<script src="{% static 'furbar/js/vendor/jquery-3.5.1.min.js' %}"></script>
+
+<!-- Bootstrap JS -->
+<script src="{% static 'furbar/js/plugins/popper.min.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/bootstrap.min.js' %}"></script>
+
+<!-- Plugins JS -->
+<script src="{% static 'furbar/js/plugins/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/ajax-contact.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/appear.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/odometer.min.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/jquery.nice-select.min.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/select2.min.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/ion.rangeSlider.min.js' %}"></script>
+<script src="{% static 'furbar/js/plugins/jquery.zoom.min.js' %}"></script>
+
+<!-- Main JS -->
+<script src="{% static 'furbar/js/main.js' %}"></script>
+
+</body>
+
+
+
+
+</html>

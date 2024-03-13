@@ -1,0 +1,196 @@
+/*--
+/*  3.4 - Off Canvas CSS
+/*----------------------------------------*/
+
+
+// oFF Canvas Box
+.off-canvas-box{
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100%;
+    background-color: $white;
+    z-index: 967;
+    overflow-y: auto;
+    transition: all 0.3s linear;
+
+    &.open{
+        left: 0;
+    }
+}
+
+// Canvas Action
+.canvas-action{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ebebeb;
+
+    & .action{
+        font-weight: 400;
+        color: $black;
+        background: transparent;
+        text-shadow: none;
+        cursor: pointer;
+        line-height: 20px;
+        font-size: 13px;
+        display: inline-block;
+        text-transform: capitalize;  
+        text-decoration: none;    
+        margin: 0 15px;  
+        transition: all 0.3s linear;
+
+        &:hover{
+            color: $primary;
+        }
+    }
+}
+
+// Canvas Close Bar
+.canvas-close-bar{
+    background-color: $secondary;
+    color: $white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    height: 40px;
+    line-height: 40px;
+
+    & span{}
+    & a{
+        text-decoration: none;
+        color: $white;
+        font-size: 30px;
+
+        & i{
+            line-height: 40px;
+        }
+    }
+}
+
+
+// Canvas Menu 
+.canvas-menu{
+    padding-bottom: 30px;
+
+    & ul{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        & li{
+            position: relative !important;
+            display: block;
+            line-height: 1;            
+
+            & a{
+                display: block;
+                color: #383838;
+                font-size: 14px;
+                font-weight: 500;
+                padding: 5px 20px;
+                padding-right: 50px;
+                line-height: 30px;
+                text-transform: capitalize;
+                border-top: 1px solid #ebebeb;
+                text-decoration: none;
+
+                & img{
+                    margin-right: 5px;
+                }
+            }
+
+            & .mobile-menu-expand {
+                width: 16px;
+                height: 16px;
+                position: absolute;
+                top: 13px;
+                right: 21px;
+                cursor: pointer;
+
+                &::before{
+                    position: absolute;
+                    content: '';
+                    width: 12px;
+                    height: 2px;
+                    background-color: #383838;
+                    top: 7px;
+                    left: 2px;
+                }
+                &::after{
+                    position: absolute;
+                    content: '';
+                    width: 2px;
+                    height: 12px;
+                    background-color: #383838;
+                    left: 7px;
+                    bottom: 2px;
+                    transition: all 0.1s linear;
+                }
+            }
+            &.active-expand{
+                & > .mobile-menu-expand {
+                    &::after{
+                        height: 0;
+                    }
+                }
+            }
+
+            & ul{
+                & li{
+                    & a{
+                        padding-left: 11%;
+                    }
+                    & ul{
+                        & li{
+                            & a{
+                                padding-left: 16%;
+                            }
+                            & ul{
+                                & li{
+                                    & a{
+                                        padding-left: 21%;
+                                    }
+                                    & ul{
+                                        & li{
+                                            & a{
+                                                padding-left: 26%;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Menu Overlay 
+.menu-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000000;
+	opacity: 0;
+	visibility: hidden;
+	z-index: 99;
+    transition: all 0.3s linear;
+    
+    &.open {
+        opacity: 0.6;
+        visibility: visible;
+    }
+}
+
+

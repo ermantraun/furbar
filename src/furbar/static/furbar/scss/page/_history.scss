@@ -1,0 +1,38 @@
+/*--
+/*  4.12 - History CSS
+/*----------------------------------------*/
+
+
+// History content
+.history-content{
+    & p{
+        font-size: 16px;
+        margin-top: 25px;
+    }
+}
+
+// History Icon
+.history-icon{
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+
+    &::before{
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 1px;
+        background-color: #fcdd93;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+    }
+    & img{
+        border-radius: 50%;
+        position: relative;
+    }
+}
+
+
+
+

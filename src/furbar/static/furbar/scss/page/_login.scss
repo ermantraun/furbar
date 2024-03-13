@@ -1,0 +1,46 @@
+/*--
+/*  4.21 - Login & Register CSS
+/*----------------------------------------*/
+
+
+.login-register-wrapper{
+    & .title{
+        font-size: 24px;
+        font-weight: 600;
+        color: $dark;
+    }
+
+    & .form-check{
+        margin-bottom: 0;
+        min-height: inherit;
+        margin-top: 30px;
+
+        & .form-check-input{
+            margin-top: 4px;
+        }
+    }
+
+    & .single-form{
+        & .btn{
+            width: 160px;
+        }
+    }
+     
+    & p{
+        margin-bottom: 0;
+        margin-top: 15px;
+        
+        & a{
+            text-decoration: none;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+

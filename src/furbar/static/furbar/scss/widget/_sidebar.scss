@@ -1,0 +1,506 @@
+/*--
+/*  5.2 - Sidebar Widget CSS
+/*----------------------------------------*/
+
+// Sidebar
+.sidebar{}
+
+// Sidebar Widget 
+.sidebar-widget{
+    margin-top: 50px;
+}
+
+// Widget Title 
+.widget-title{
+    font-size: 24px;
+    font-weight: 600;
+    color: #717171;
+    margin-bottom: 0;
+    margin-top: -5px;
+
+    @media #{$desktop-device}{
+        font-size: 22px;
+    }
+}
+
+// Widget Search 
+.widget-search{
+    position: relative;
+
+    & input{
+        width: 100%;
+        height: 60px;
+        padding: 0 15px;
+        padding-right: 60px;
+        border: 1px solid #ececec;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: $headings-font-family;
+        color: #969696;
+        transition: all 0.3s linear;
+        border-radius: 0;
+        background-color: $white;
+
+        &:focus{
+            outline: none;
+            border-color: $primary;
+        }
+        @include placeholder{
+            opacity: 1;
+        }
+    }
+    & button{
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        border: 0;
+        padding: 0;
+        width: 50px;
+        height: 60px;
+        color: #969696;
+        text-align: center;
+        background: none;
+        transition: $transition-base;
+
+        &::before{
+            position: absolute;
+            content: '';
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 25px;
+            background-color: #ececec;
+        }
+    }    
+} 
+
+// Widget Checkbox 
+.widget-checkbox{
+    margin-top: 17px;
+
+    & .checkbox-items{
+        & li{
+            & + li{
+                margin-top: 13px;
+            }
+
+            & input[type="checkbox"],
+            & input[type="radio"]{
+                display: none;
+
+                & + label{
+                    margin-bottom: 0;
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: #666666;
+                    font-family: $headings-font-family;
+                    cursor: pointer;
+
+                    & span{
+                        width: 15px;
+                        height: 15px;
+                        border-radius: 3px;
+                        border: 2px solid #888888;
+                        display: inline-block;
+                        position: relative;
+                        top: 2px;
+                        margin-right: 13px;
+                        transition: $transition-base;
+
+                        &::before{
+                            position: absolute;
+                            content: "\f107";
+                            font-family: FontAwesome;
+                            font-size: 14px;
+                            width: 15px;
+                            height: 15px;
+                            line-height: 15px;
+                            top: -2px;
+                            left: -2px;
+                            text-align: center;
+                            color: $white;
+                            opacity: 0;
+                            visibility: hidden;
+                            transition: $transition-base;
+                        }
+                    }
+                }
+                &:checked{
+                    & + label{
+                        & span{
+                            background-color: #ffb300;
+                            border-color: #ffb300;
+
+                            &::before{
+                                opacity: 1;
+                                visibility: visible;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Widget Link 
+.widget-categories{
+    height: 210px;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar-track{
+        // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #ebebeb;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar{
+        width: 5px;
+        background-color: #ebebeb;
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb{
+        background-color: $primary;
+        border-radius: 10px;
+    }
+}
+
+// Widget Price 
+.widget-price{
+    margin-top: 20px;
+
+    & .irs {
+        & .irs-min,
+        & .irs-max {
+            display: none;
+        }
+
+        & .irs-from, 
+        & .irs-to, 
+        & .irs-single {
+            color: #656565;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: $headings-font-family;        
+            padding: 0;
+            background: none;
+            border-radius: 0;
+            top: -5px;
+
+            &::before{
+                display: none;
+            }
+        }
+
+        & .irs-line{
+            height: 4px;
+            background-color: #ebebeb;
+        }
+        & .irs-bar{
+            height: 4px;
+            background-color: #ffb300;
+        }
+
+        & .irs-handle{
+            width: 15px;
+            height: 15px;
+            background-color: $white;
+            border: 3px solid #ffb300;
+            border-radius: 50%;
+            top: 19px;
+            cursor: pointer;
+
+            & i{
+                display: none;
+            }
+        }
+    }
+}
+
+// Widget color 
+@each $name, $value in $colors {
+    .color-#{$name} {
+        background-color: $value !important;
+        border-color: $value !important;
+
+        &::before{
+            border-color: $value;
+
+            @if $name == light {
+                color: $dark;
+            } @else if $name == warning {
+                color: $dark;
+            } @else {
+                color: $white;
+            }
+        }
+    }
+}
+
+// Widget Tags
+.widget-tags{
+   
+    & .tags-list{
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -7px;
+        margin-right: -7px;
+        padding-top: 5px;
+
+        & li{
+            padding: 15px 7px 0;
+
+            & a{
+                height: 35px;
+                line-height: 35px;
+                padding: 0 30px;
+                font-size: 16px;
+                font-weight: 600;
+                font-family: $headings-font-family;
+                background-color: #f6f6f6;
+                display: block;
+                color: #7e7e7e;
+                transition: $transition-base;
+                border-radius: 50px;
+
+                @media #{$desktop-device}{
+                    padding: 0 15px;
+                }
+
+                @media #{$small-mobile}{
+                    padding: 0 20px;
+                }
+
+                &:hover{
+                    background-color: $primary;
+                    color: $white;
+                }
+            }
+        }
+    }
+}
+
+// Sidebar Widget 02
+.sidebar-widget-02{
+    margin-top: 50px;
+    padding: 30px;
+    border: 1px solid #f1f1f1;
+}
+
+// Widget Title 
+.widget-title-02{
+    font-size: 22px;
+    font-weight: 600;
+    text-transform: uppercase;
+    position: relative;
+    color: #383838;
+    margin-bottom: 0;  
+    padding-left: 1rem;
+
+    &::before{
+        position: absolute;
+        content: '';
+        width: 2px;
+        height: 14px;
+        background-color: $primary;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+    }
+}
+
+// Widget Search 
+.widget-search-02{
+    position: relative;
+
+    & input{
+        width: 100%;
+        height: 50px;
+        padding: 0 15px;
+        padding-right: 75px;
+        border: 1px solid #d9d9d9;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: $headings-font-family;
+        color: #919090;
+        transition: all 0.3s linear;
+        border-radius: 0;
+        background-color: $white;
+
+        &:focus{
+            outline: none;
+            border-color: $primary;
+        }
+        @include placeholder{
+            opacity: 1;
+        }
+    }
+    & button{
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        border: 0;
+        padding: 0;
+        width: 64px;
+        height: 50px;
+        color: $white;
+        text-align: center;
+        background: none;
+        transition: $transition-base;
+        background-color: $primary;
+    }    
+} 
+
+// Widget Recent Post 
+.widget-recent-post{
+    padding-top: 5px;
+}
+
+.single-recent-post{
+    padding: 25px 0;
+    border-bottom: 1px dashed #f1f1f1;
+
+    &:last-child{
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    & .blog-meta{
+        display: flex;
+
+        & li{
+            font-size: 15px;
+            font-weight: 500;
+            color: #545454;
+            font-family: $headings-font-family;
+            display: inherit;
+
+            & i{
+                font-size: 18px;
+                color: $black;
+                margin-right: 8px;
+            }
+            
+            & + li{
+                margin-left: 20px;
+            }
+            & a{}
+        }
+    }
+    & .title{
+        margin-bottom: 0;
+
+        & a{
+            margin-top: 8px;
+            display: inline-block;
+            color: #383838;
+            font-weight: 600;
+            font-size: 20px;
+
+            @media #{$desktop-device}{
+                font-size: 16px;
+            }
+
+            &:hover{
+                color: $primary;
+            }
+        }
+    }
+}
+
+// Widget Link
+.widget-link{
+    padding-top: 12px;
+
+    & li{
+        padding: 10px 0;
+        border-bottom: 1px dashed #f1f1f1;
+        
+        &:last-child{
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        & a{
+            font-size: 18px;
+            font-weight: 500;
+            color: #545454;
+            font-family: $headings-font-family;
+            transition: $transition-base;
+
+            &:hover{
+                color: $primary;
+            }
+        }
+    }
+}
+
+// Widget Subscribe
+.widget-subscribe{
+    margin-top: 30px;
+
+    & input{
+        width: 100%;
+        height: 50px;
+        padding: 0 20px;
+        font-size: 14px;
+        font-family: $headings-font-family;
+        font-weight: 600;
+        color: #c0c0c0;
+        transition: $transition-base;
+        border: 1px solid #d7d7d7;
+        border-radius: 0;
+        background-color: $white;
+        text-align: center;
+
+        @include placeholder{
+            opacity: 1;
+        }
+
+        &:focus{
+            border-color: $primary;
+            outline: none;
+        }
+    }
+    & .btn{
+        height: 50px;
+        line-height: 50px;
+        padding: 0 40px;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 0;
+        border-radius: 0;
+        margin-top: 1rem;
+        width: 100%;
+    }
+}
+
+
+// Blog Admin
+.widget-admin{
+    text-align: center;
+
+    & img{
+        width: 100%;
+    }
+    & .admin-name{
+        font-size: 18px;
+        font-weight: 600;
+        color: #2e2a31;
+        margin-bottom: 0;
+        margin-top: 22px;
+    }
+    & .designation{
+        font-size: 16px;
+        font-weight: 600;
+        font-family: $headings-font-family;
+        color: #5f5f5f;
+        display: block;
+    }
+    & .signechar{
+        width: auto;
+    }
+}
+
+
+

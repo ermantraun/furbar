@@ -1,0 +1,239 @@
+/*--
+/*  4.2 - Banner CSS
+/*----------------------------------------*/
+
+// Single Banner 
+.single-banner{
+    position: relative;
+    overflow: hidden;
+    margin-top: 30px;
+
+    & img{
+        width: 100%;
+        transition: $transition-base;
+    }
+    & .banner-content{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 40px;
+        padding-top: 35px;
+
+        @media #{$desktop-device, $small-mobile}{
+            padding: 20px;
+            padding-top: 15px;
+        }
+        @media #{$tablet-device}{
+            padding: 25px;
+            padding-top: 20px;
+        }
+
+        & .title{
+            margin-bottom: 0;
+            
+            & a{
+                font-size: 30px;
+                font-weight: 400;
+                color: #1c1c1c;
+                transition: $transition-base;
+
+                @media #{$desktop-device, $small-mobile}{
+                    font-size: 24px;
+                }
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+        & .discount{
+            font-size: 34px;
+            line-height: 1.3;
+            font-weight: 600;
+            font-family: $headings-font-family;
+            color: $primary;
+            display: block;
+            margin-top: 10px;
+
+            @media #{$desktop-device, $small-mobile}{
+                font-size: 26px;
+            }
+        }
+        & .btn{
+            margin-top: 16px;
+        }
+
+        &.content-02{
+            & .title{                
+                & a{
+                    color: $white;
+
+                    transition: $transition-base;
+
+                    &:hover{
+                        color: $primary;
+                    }
+                }
+            }
+            & .discount{
+                color: #444444;
+            }
+        }
+    }
+
+    &:hover{
+        & img{
+            transform: scale(1.1);
+        }
+    }
+}
+
+
+// Single Banner 02
+.single-banner-02{
+    position: relative;
+    overflow: hidden;
+
+    & img{
+        width: 100%;
+        transition: $transition-base;
+    }
+    & .banner-content{
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 40px;
+        padding-top: 35px;
+
+        @media #{$desktop-device}{
+            padding: 20px;
+            padding-top: 15px;
+        }
+
+        & .title{
+            margin-bottom: 0;
+            
+            & a{
+                font-size: 36px;
+                font-weight: 400;
+                color: $white;
+                transition: $transition-base;
+
+                @media #{$desktop-device}{
+                    font-size: 30px;
+                }
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+        & .discount{
+            font-size: 54px;
+            line-height: 1.3;
+            font-weight: 700;
+            font-family: $headings-font-family;
+            color: $primary;
+            display: block;
+            margin-top: 6px;
+            color: $white;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: $white;
+
+            @media #{$desktop-device}{
+                font-size: 34px;
+            }
+        }
+        & .btn{
+            margin-top: 20px;
+        }
+    }
+
+    &:hover{
+        & img{
+            transform: scale(1.1);
+        }
+    }
+}
+
+
+// Single Banner 03
+.single-banner-03{
+    position: relative;
+    overflow: hidden;
+    margin-top: 30px;
+
+    & img{
+        width: 100%;
+        transition: $transition-base;
+    }
+    & .banner-content{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 60px;
+        padding-top: 55px;
+
+        @media #{$desktop-device, $large-mobile}{
+            padding: 40px;
+            padding-top: 35px;
+        }
+        @media #{$small-mobile}{
+            padding: 20px;
+            padding-top: 15px;
+        }
+
+        & .sub-title{
+            font-size: 20px;
+            font-weight: 500;
+            color: #1c1c1c;
+            margin-bottom: 0;
+
+            @media #{$small-mobile}{
+                font-size: 16px;
+            }
+        }
+        & .title{
+            margin-bottom: 0;
+            
+            & a{
+                font-size: 40px;
+                font-weight: 600;
+                color: $primary;
+                transition: $transition-base;
+                margin-top: 5px;
+                display: inline-block;
+
+                @media #{$desktop-device}{
+                    font-size: 30px;
+                }
+
+                @media #{$small-mobile}{
+                    font-size: 24px;
+                }
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+        & .btn{
+            margin-top: 25px;
+
+            @media #{$small-mobile}{
+                margin-top: 15px;
+            }
+        }
+    }
+    &:hover{
+        & img{
+            transform: scale(1.1);
+        }
+    }
+}
+

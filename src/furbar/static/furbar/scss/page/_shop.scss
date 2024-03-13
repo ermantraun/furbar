@@ -1,0 +1,114 @@
+/*--
+/*  4.15 - Shop CSS
+/*----------------------------------------*/
+
+// Shop Top bar 
+.shop-top-bar{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 43px;
+
+    & > *{
+        @media #{$small-mobile}{
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    & .shop-text{
+        & p{
+            font-size: 18px;
+            font-family: $headings-font-family;
+            font-weight: 500;
+            color: #6c6c6c;
+            text-transform: uppercase;
+
+            & span{
+                color: #ffb300;
+            }
+        }
+    }
+    & .shop-tabs{
+        & .nav{
+            @media #{$small-mobile}{
+                justify-content: center;
+            }
+
+            & li{
+                padding: 0 6px;
+
+                & button{
+                    border: 0;
+                    padding: 0;
+                    background: none;
+                    color: #9e9e9e;
+                    font-size: 18px;
+                    
+                    &:hover,
+                    &.active{
+                        color: $black;                        
+                    }
+                }
+            }
+        }
+    }
+    & .shop-sort{
+        & .title{
+            white-space: nowrap;
+            font-size: 18px;
+            font-weight: 500;
+            font-family: $headings-font-family;
+            color: #6c6c6c;
+        }
+        & .nice-select{
+            border-radius: 0;
+            border: 0;
+            display: inline-block;
+            float: none;
+            font-family: $headings-font-family;
+            font-size: 18px;
+            font-weight: 500;
+            height: 28px;
+            line-height: 26px;
+            outline: none;
+            padding-left: 0;
+            padding-right: 15px;  
+            color: $black;
+            
+            &::after{
+                display: none;
+            }
+
+            & .current{}
+            & .list{
+                border-radius: 0;
+
+                & .option {
+                    font-family: $font-family-base;
+                    font-size: 14px;
+                    line-height: 28px;
+                    list-style: none;
+                    min-height: 28px;
+                    outline: none;
+                    padding-left: 15px;
+                    padding-right: 15px;
+                    color: #6c6c6c;            
+                }
+            }
+        }
+    }
+}
+
+
+// Shop Product Wrapper
+.shop-product-wrapper{}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,163 @@
+/*--
+/*  4.20 - My Account CSS
+/*----------------------------------------*/
+
+// My Account Menu
+.my-account-menu{
+    & .account-menu-list{
+        background-color: #f7f7f7;
+
+        & li{
+            & a{
+                width: 100%;
+                padding: 10px 30px;
+                font-size: 14px;
+                color: $body-color;
+                margin-top: -1px;
+                transition: all 0.3s linear;
+                display: block;
+                text-decoration: none;
+                
+                & i{
+                    margin-right: 5px;
+                }
+                
+                &:hover,
+                &.active{
+                    background-color: $primary;
+                    color: $white;
+                }
+            }
+        }
+    }
+}
+
+
+// My Account tab 
+.my-account-tab{
+    & .account-title{
+        font-size: 24px;
+        font-weight: 500;
+        color: $black;
+    }
+}
+
+// Account Table 
+.account-table{
+    & .table{
+        & thead{
+            & tr{
+                & th{
+                    border: 1px solid #ECECEC;
+                    border-bottom-color: #ECECEC !important;
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: $black;
+                    padding: 8px 15px;
+
+                    &.no{}
+                    &.name{
+                        min-width: 140px;
+                    }
+                    &.date{
+                        min-width: 130px;
+                    }
+                    &.status{}
+                    &.total{}
+                    &.action{}
+                }
+            }
+        }
+        & tbody{
+            & tr{
+                & td{
+                    font-size: 14px;
+                    color: $black;
+                    font-weight: 400;
+                    vertical-align: middle;
+                    border: 1px solid #ECECEC;
+                    padding: 0;
+
+                    & a{
+                        padding: 0 15px;
+                        height: 45px;
+                        line-height: 45px;    
+                        color: $black;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// My Account Dashboard 
+.my-account-dashboard{    
+    & .welcome-dashboard{
+        margin-top: 10px;
+        
+        & p{
+            font-size: 14px;
+            
+            & strong{
+                font-weight: 500;
+            }
+            & a{
+                color: $black;
+                @include transition(0.3s);
+                
+                &:hover{
+                    color: $primary;
+                }
+            }
+        }
+    }
+    & p{}
+}
+
+// My Account Payment 
+.my-account-payment{
+    & p{
+        font-weight: 500;
+        font-size: 14px;
+    }
+}
+
+// My Account Address 
+.my-account-address{
+    & .account-address {
+        & .name{
+            font-size: 16px;
+            color: $black;
+            font-weight: 500;
+        }
+        & p{
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        & .btn{
+            margin-top: 20px;
+            height: 45px;
+            line-height: 45px;
+        }
+    }
+}
+
+// My Account Details 
+.my-account-details{
+    
+    & .account-details{
+        margin-top: -15px;
+
+        & .title{
+            font-size: 20px;
+            font-weight: 500;
+            color: $black;
+        }
+
+        & .single-form{
+            & .btn{}
+        }
+    }
+}
+

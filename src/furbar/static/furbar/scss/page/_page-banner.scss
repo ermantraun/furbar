@@ -1,0 +1,65 @@
+/*--
+/*  4.11 - Page Banner CSS
+/*----------------------------------------*/
+
+
+// Page Banner Section 
+.page-banner-section{
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 500px;
+    display: flex;
+    align-items: center;
+
+    @media #{$large-mobile}{
+        height: 400px;
+    }
+}
+
+// Page Banner Content 
+.page-banner-content{
+    padding-top: 80px;
+
+    @media #{$tablet-device}{
+        padding-top: 150px;
+    }
+    @media #{$large-mobile}{
+        padding-top: 145px;
+    }
+
+    & .title{
+        font-size: 36px;
+        font-weight: 600;
+        color: $white;
+        text-transform: uppercase;
+    }
+
+    & .breadcrumb{
+        margin-bottom: 0;
+
+        & li{
+            font-size: 14px;
+            color: #262c52;
+            text-transform: uppercase;
+            position: relative;
+            display: flex;
+
+            &.active{
+                color: $white;
+            }
+
+            & + li{
+                &::before{
+                    content: "\e684";
+                    font-family: 'Pe-icon-7-stroke';
+                    font-size: 22px;
+                    line-height: 0.8;
+                }
+            }
+            & a{}
+        }
+    }
+}
+
+

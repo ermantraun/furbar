@@ -1,0 +1,69 @@
+/*--
+/*  4.13 - Counter CSS
+/*----------------------------------------*/
+
+
+// Single Counter
+.single-counter{
+    text-align: center;
+    border: 1px solid #e1e1e1;
+    padding: 30px;
+    padding-top: 35px;
+    margin-top: 30px;
+
+    @media #{$small-mobile}{
+        padding: 25px;
+    }
+
+    & .count{
+        color: #ffb300;        
+        font-weight: 600;
+        font-family: $headings-font-family;
+        display: block;
+
+        & span{
+            font-size: 60px;
+            line-height: 0.8;
+            font-family: $headings-font-family;
+
+            @media #{$small-mobile}{
+                font-size: 30px;
+            }
+        }
+        & sub{
+            font-size: 30px;
+            bottom: -11px;
+
+            @media #{$small-mobile}{
+                font-size: 18px;
+                bottom: -2px;
+            }
+        }
+    }
+    & p{
+        color: #565656;
+        font-size: 16px;
+        font-weight: 600;
+        font-family: $headings-font-family;
+
+        @media #{$small-mobile}{
+            font-size: 14px;
+            line-height: 1.3;
+            margin-top: 5px;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

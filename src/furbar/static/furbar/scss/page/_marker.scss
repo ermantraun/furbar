@@ -1,0 +1,170 @@
+/*--
+/*  4.9 - Marker CSS
+/*----------------------------------------*/
+
+
+.marker-wrapper{
+    height: 300px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-size: 100% 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    @media #{$large-mobile}{
+        height: 230px;
+    }
+    @media #{$small-mobile}{
+        background-size: 160% 100%;
+        background-position: center right;
+    }
+
+    & .marker-content{
+        padding: 50px 100px;
+
+        @media #{$tablet-device}{
+            padding: 50px;
+        }
+        @media #{$large-mobile}{
+            padding: 35px;
+        }
+        @media #{$small-mobile}{
+            display: none;
+        }
+
+        & .sub-title{
+            color: #4a4f52;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        & .title{
+            color: #4a4f52;
+            font-size: 48px;
+            font-weight: 700;
+            margin-top: 15px;
+
+            @media #{$tablet-device ,$large-mobile}{
+                font-size: 38px;
+            }
+        }
+    }
+
+    & .image-pointer{
+        position: absolute;
+        cursor: pointer;
+
+        &.pointer-01{
+            top: 50%;
+            left: 44%;
+
+            @media #{$large-mobile}{
+                top: 48%;
+            }
+            @media #{$small-mobile}{
+                left: 10%;
+            }
+
+            & .pointer-box{
+                @media #{$small-mobile}{
+                    left: -30px;
+                    transform: translateX(0);
+                }
+            }
+        }
+        &.pointer-02{
+            top: 58px;
+            left: 55.5%;
+
+            @media #{$large-mobile}{
+                top: 40px;
+            }
+            @media #{$small-mobile}{
+                left: 27%;
+            }
+        }
+        &.pointer-03{
+            top: 40%;
+            left: 67%;
+
+            @media #{$small-mobile}{
+                left: 46%;
+            }
+        }
+        &.pointer-04{
+            top: 39%;
+            left: 80.5%;
+
+            @media #{$small-mobile}{
+                left: 67%;
+            }
+        }
+
+        & i{
+            width: 30px;
+            height: 30px;
+            line-height: 26px;
+            border: 2px solid $white;
+            text-align: center;
+            font-size: 12px;
+            display: inline-block;
+            color: $white;
+            border-radius: 50%;
+            background-color: rgba(255, 179, 0, 0.81);
+        }
+        & .pointer-box{
+            width: 200px;
+            padding: 15px 20px;
+            background-color: $white;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: $transition-base;
+            box-shadow: 2px 4px 8px rgba($dark, 0.15);
+            z-index: 5;
+
+            & .name{
+                margin-bottom: 0;
+    
+                & a{
+                    font-size: 16px;
+                    font-weight: 400;
+                    font-family: $font-family-base;
+                    color: #4c4c4c;
+                    transition: $transition-base;
+    
+                    @media #{$desktop-device}{
+                        font-size: 15px;
+                    }
+    
+                    &:hover{
+                        color: $primary;
+                    }
+                }
+            }
+            & .price{
+                font-size: 18px;
+                color: $primary;
+                margin-top: 3px;
+                display: block;
+
+                @media #{$desktop-device}{
+                    font-size: 16px;
+                }
+            }
+        }
+
+        &:hover{
+            & .pointer-box{
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }    
+}
+

@@ -1,0 +1,192 @@
+/*--
+/*  4.18 - Compare CSS
+/*----------------------------------------*/
+
+// Compare Wrapper 
+.compare-wrapper{
+    & .table{
+        margin-bottom: 0;
+
+        &.table-striped{
+            & > tbody {
+                & > tr{
+                    &:nth-of-type(2n+1){
+                        --bs-table-accent-bg: none;
+                        color: #333333;
+                    }
+                    &:nth-of-type(2n+2){
+                        background-color: #eeeeee;
+                    }
+                }
+            }
+        } 
+        & tbody{
+            & tr{
+                & th,
+                & td{
+                    -webkit-box-flex: 0;
+                    color: #333333;
+                    font-size: 16px;
+                    font-weight: 600;
+                    text-transform: capitalize;
+                    border: 0;
+                    padding: 15px;
+                    min-width: 270px;
+                }
+                & th{
+                    white-space: nowrap;
+
+                    @media #{$large-mobile}{
+                        display: none;
+                    }
+                }
+                & td{
+                    font-weight: 500;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+
+
+.compare-product{
+    position: relative;
+    display: inline-block;
+    padding-top: 2.0rem;
+    margin-bottom: 30px;
+
+    & .pack-product-container{
+        & .thumb-mask{
+            margin-bottom: 20px;
+            & a{
+                display: block;
+            }
+        }
+        & .desc-box{
+            & .product-name {
+                font-size: 14px;
+                margin-bottom: 10px;
+                font-weight: 500;
+                display: block;
+            }
+            & .product-reviews{
+                margin-bottom: 10px;
+
+                & .review-star{
+                    position: relative;
+                    display: inline-block;
+        
+                    &::before{
+                        content: "\f005" "\f005" "\f005" "\f005" "\f005";
+                        font-family: FontAwesome;
+                        display: inline-block;
+                        color: #dbdbdb;
+                        font-weight: 400;
+                        line-height: 1;
+                        vertical-align: middle;
+                        font-size: 14px;               
+                    }
+                    & .star{
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        height: 100%;
+                        z-index: 2;
+                        overflow: hidden;
+        
+                        &::before{
+                            content: "\f005" "\f005" "\f005" "\f005" "\f005";
+                            font-family: FontAwesome;
+                            display: inline-block;
+                            color: #ffc600;
+                            font-weight: 400;
+                            line-height: 1;
+                            vertical-align: middle;
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+            & .product-prices{
+                margin-top: 15px;
+        
+                & .old-price{
+                    font-size: 16px;
+                    color: #666666;
+                    font-weight: 400;
+                    text-decoration: line-through;
+                    margin-right: 5px;
+        
+                    @media #{$small-mobile}{
+                        font-size: 18px;
+                    }
+                }
+                & .sale-price{
+                    color: $primary;
+                    font-size: 18px;
+                    font-weight: 400;
+                    display: inline-block;
+                    margin-right: 13px;
+        
+                    @media #{$small-mobile}{
+                        font-size: 24px;
+                    }
+                }
+            }
+
+            & .product-cart{
+                padding-top: 15px;
+
+                & .btn{
+                    height: 45px;
+                    line-height: 45px;
+                    padding: 0 40px;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+    & .compare-remove{
+        padding-right: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #555555;
+
+        &::after,
+        &::before {
+            content: " ";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 15px;
+            height: 2px;
+            display: inline-block;
+            transform: rotate(0);
+            background-color: currentColor;
+            -webkit-transition: background-color .2s ease-in-out,transform .2s ease-in-out,width .2s ease-in-out;
+            -webkit-transition: background-color .2s ease-in-out,width .2s ease-in-out,-webkit-transform .2s ease-in-out;
+            transition: background-color .2s ease-in-out,width .2s ease-in-out,-webkit-transform .2s ease-in-out;
+            transition: background-color .2s ease-in-out,transform .2s ease-in-out,width .2s ease-in-out;
+            transition: background-color .2s ease-in-out,transform .2s ease-in-out,width .2s ease-in-out,-webkit-transform .2s ease-in-out;
+        }
+        &:hover{
+            color: $primary;
+
+            &::before{
+                transform: rotate(45deg);
+                background-color: $primary;
+            }
+            &::after{
+                transform: rotate(-45deg);
+                background-color: $primary;
+            }
+        }
+    }
+}
+
+
+
