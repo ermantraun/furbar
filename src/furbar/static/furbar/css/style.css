@@ -5683,6 +5683,20 @@ fieldset:disabled .btn {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 }
 
+.page-link-dark {
+  position: relative;
+  display: block;
+  color: #696969;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  -o-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page-link {
     -webkit-transition: none;
@@ -17240,6 +17254,30 @@ blockquote .blockquote-name::before {
   border-bottom: 1px solid #ebebeb;
 }
 
+
+.comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.comment-actions a {
+  margin-left: 10px;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 1.5em; /* Увеличение размера иконок */
+}
+
+.comment-actions a:hover {
+  color: #0056b3;
+}
+
+.modal-body .form-group {
+  margin-bottom: 15px;
+}
+
+
+
 .canvas-action .action {
   font-weight: 400;
   color: #000;
@@ -17252,9 +17290,8 @@ blockquote .blockquote-name::before {
   text-transform: capitalize;
   text-decoration: none;
   margin: 0 15px;
-  -webkit-transition: all 0.3s linear;
-  -o-transition: all 0.3s linear;
-  transition: all 0.3s linear;
+
+  
 }
 
 .canvas-action .action:hover {
@@ -22956,6 +22993,11 @@ blockquote .blockquote-name::before {
 .color-teal {
   background-color: #20c997 !important;
   border-color: #20c997 !important;
+}
+
+.old-price {
+  color: grey;
+  font-size: 0.1em; /* или любой другой размер, который вам нужен */
 }
 
 .color-teal::before {

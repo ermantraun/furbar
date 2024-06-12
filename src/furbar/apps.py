@@ -4,3 +4,7 @@ class FurbarConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'furbar'
     verbose_name = 'Furbar Application'
+    
+    def ready(self):
+        from . import signals
+        

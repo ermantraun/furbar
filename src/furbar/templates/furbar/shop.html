@@ -1,0 +1,307 @@
+{% extends "furbar/base.html" %}
+{% load static %}
+{% block title %} Shop {% endblock title %}
+{% block content %}
+
+    <!-- Page Banner Section Start -->
+    <div class="section page-banner-section" style="background-image: url({% static 'furbar/images/page-banner.webp' %});">
+        <div class="container">
+
+            <!-- Page Banner Content End -->
+            <div class="page-banner-content">
+                <h2 class="title">Магазин</h2>
+
+                <ul class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Домой</a></li>
+                    {% if category %}
+                    <li><a href="{% url 'shop' %}"> Магазин</a></li>
+                    {% for category in category.category_hierarchy %}
+                    <li><a href="{% url 'shop' %}?category={{category.name}}">{{category.name}}</a></li>
+                    
+                    {% endfor %}
+                    <li class='active'>{{category.name}}</li>
+                    {% else %}
+                    <li class='active'><a href="{% url 'shop' %}"> Магазин</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- Page Banner Content End -->
+
+        </div>
+    </div>
+    <!-- Page Banner Section End -->
+    <!-- Shop Section Start -->
+    <style>
+        .filter-form {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .filter-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .filter-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        .filter-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        .filter-form button {
+            background-color: orange;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .filter-form button:hover {
+            background-color: #0056b3;
+        }
+        .tag {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .tag.selected {
+            background-color: #ccc;
+            color: #000;
+        }
+        .dark-grey {
+            color: #444; /* Цвет иконки темно-серый */
+        }
+    </style>
+
+    <div class="section section-padding mt-n10">
+        
+        
+         <div class="filter-form">
+            <form action="" method="GET">
+                <label for="category">Категории:</label>
+                 <select name="category" id="category" multiple>
+                     <option value="All">Все</option>
+                     {% for category in categories %}
+                     <option value="{{ category.name }}">{{ category.name }}</option>
+                     {% endfor %}
+                 </select>
+                 <label for="manufacturer">Производитель:</label>
+                 <select name="manufacturer" id="manufacturer" multiple>
+                     <option value="All">Все</option>
+                     {% for manufacturer in manufacturers %}
+                     <option value="{{ manufacturer.name }}">{{ manufacturer.name }}</option>
+                     {% endfor %}
+                 </select>
+                 <label for="tags">Теги:</label>
+                 <div id="tags-container">
+                    {% for tag in tags %}
+                    <span class="tag">{{ tag.name }}</span>
+                    {% endfor %}
+                 </div>
+                 <label for="min-price">От:</label>
+                 <input type="text" id="min-price" name="min_price" placeholder='0' >
+                <label for="max-price">До:</label>
+                 <input type="text" id="max-price" name="max_price" placeholder='100000' >
+                 <div class="">
+                    <span class="">Сортировать по :</span>
+                    <select class="" name="sort_by" multiple>
+                        <option value="price">Цене</option>
+                        <option value="rating">Рейтингу</option>
+                        <option value="sales">Продажам</option>
+                    </select>
+                </div>
+                <div class="sort-order">
+                    <label for="sort-order">Порядок сортировки:</label>
+                    <select name="sort_order" id="sort-order" multiple>
+                        <option value="asc">По возрастанию</option>
+                        <option value="desc">По убыванию</option>
+                    </select>
+                </div>
+                <button type="submit" onclick='submitForm()'>Найти</button>
+             </form>
+         </div>
+    
+        
+
+   <script>
+    $(document).ready(function(){
+        // Обработчик клика по тегу для его добавления в фильтрацию
+       $(document).on('click', '.tag', function(){
+            var tagValue = $(this).text();
+            $(this).toggleClass('selected');
+            if ($(this).hasClass('selected')) {
+                $('#tags-container').append('<input type="hidden" name="tags[]" value="' + tagValue + '">');
+           } else {
+                $('#tags-container').find('input[value="' + tagValue + '"]').remove();
+            }
+        });
+    });
+
+    function submitForm() {
+        var minPrice = document.getElementById("min-price").value;
+        var maxPrice = document.getElementById("max-price").value;
+        
+        if (!minPrice) {
+            document.getElementById("min-price").removeAttribute("name");
+        }
+        
+        if (!maxPrice) {
+            document.getElementById("max-price").removeAttribute("name");
+        }
+        
+        document.getElementById("filter-form").submit();
+    }
+
+    </script>
+
+
+
+        <div class="container">
+            
+            <!-- Shop top Bar Start -->
+            <div class="shop-top-bar">
+                <div class="shop-text">
+                    <p><span>{{ find_products_count }}</span> Product Found of <span>{{all_products_count}}</span></p>
+                </div>
+                <div class="shop-tabs">
+                    <ul class="nav">
+                        <li><button data-bs-toggle="tab" data-bs-target="#grid"><i class="fa fa-th"></i></button></li>
+                        <li><button class="active" data-bs-toggle="tab" data-bs-target="#list"><i class="fa fa-list"></i></button></li>
+                    </ul>
+                </div>
+                
+                
+            </div>
+            <!-- Shop top Bar End -->
+
+            <div class="tab-content"> 
+                <div class="tab-pane fade" id="grid">
+
+                    <!-- Shop Product Wrapper Start -->
+                    <div class="shop-product-wrapper">
+                        <div class="row">
+                            <div class="col-lg-3 col-sm-6">
+                                {% for product in products %}
+                                <div class="single-product">
+                                    <a href="{% url 'product-details' article=product.article  %}"><img src="{{ product.first_image.preview.url }}" alt="product"></a>
+                                    <div class="product-content">
+                                        <h4 class="title"><a href="{% url 'product-details' article=product.article  %}">{{ product.name }}</a></h4>
+                                        <div class="price">
+                                            {% if product.has_discount %}
+                                            <span class="sale-price" >{{product.discounted_price}}₽</span> &nbsp;
+                                            <span class="sale-price old-price" ><strike>{{ product.price }}</strike></span>
+                                            {% else %}
+                                            <span class="sale-price">{{ product.price }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <ul class="product-meta">
+                                        <li><a class="action add-to-basket" href="{% url 'basket_add' article=product.article %}"><i class="pe-7s-shopbag"></i></a></li>
+                                        <li><a class="action add-to-wishlist" href="{% url 'wishlist_add' article=product.article %}"><i class="pe-7s-like"></i></a></li>
+                                    </ul>
+                                </div>
+                                <!-- Single Product End -->
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Shop Product Wrapper End -->
+
+                </div>
+                <div class="tab-pane fade show active" id="list">
+
+                    <!-- Shop Product Wrapper Start -->
+                    <div class="shop-product-wrapper">
+
+                        <!-- Single Product Start -->
+                        {% for product in products %}
+                        <div class="single-product-02 product-list">
+                            <div class="product-images">
+                                <a href="{% url 'product-details' article=product.article  %}"><img src="{{ product.first_image.preview.url }}" alt="{{ product.name }}"></a>
+                                
+                                <ul class="product-meta">
+                                    <li>
+                                        <a class="action add-to-basket {% if product in basket %}active{% endif %}" 
+                                           href="" {% if product in basket %}style="background-color:orange;"{% endif %} data-add-url="{% url 'basket_add' article=product.article %}" 
+                                           data-delete-url="{% url 'basket_delete' article=product.article %}">
+                                            <i class="pe-7s-shopbag"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="action add-to-wishlist {% if product in wishlist %}active{% endif %}" 
+                                           href="" {% if product in wishlist %}style="background-color:orange;"{% endif %} data-add-url="{% url 'wishlist_add' article=product.article %}" 
+                                           data-delete-url="{% url 'wishlist_delete' article=product.article %}">
+                                            <i class="pe-7s-like"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                                
+                            </div>
+                            <div class="product-content">
+                                <h4 class="title"><a href="{% url 'product-details' article=product.article  %}">{{ product.name }}</a></h4>
+                                <div class="price">
+                                    {% if product.has_discount %}
+                                    <span class="sale-price" >{{product.discounted_price}}₽</span> &nbsp;
+                                    <span class="sale-price old-price" ><strike>{{ product.price }}</strike></span>
+                                    {% else %}
+                                    <span class="sale-price">{{ product.price }}</span>
+                                    {% endif %}
+                                </div>
+                                <p>{{ product.description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- Single Product End -->
+                        
+                        
+
+                    </div>
+                    <!-- Shop Product Wrapper End -->
+
+                </div>
+            </div>
+
+            <!-- Page pagination Start -->
+            <div class="page-pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="?page={{ first_page_number }} "><i class="fa fa-angle-left"></i><i class="fa fa-angle-left"></i></a></li>
+                    {% if previous_page %}
+                    <li class="page-item"><a class="page-link" href="?page={{ previous_page }}"><i class="fa fa-angle-left" style="color: #444;"></i></a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link"><i class="">...</i></a></li>
+                    {% endif %}
+                    {% for page_number in left_page_button_range %}
+                    <li class="page-item"><a class="page-link" href="?page={{page_number}}">{{page_number}}</a></li>
+                    {% endfor %}
+                    <li class="page-item"><a class="page-link active" href="?page={{page_number}}">{{page_number}}</a></li>
+                    {% for page_number in right_page_button_range %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_number }}">{{page_number}}</a></li>
+                    {% endfor %}
+                    {% if next_page %}
+                    <li class="page-item"><a class="page-link" href="?page={{ next_page }}"><i class="fa fa-angle-right"></i></a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link"><i class="">...</i></a></li>
+                    {% endif %}
+                    <li class="page-item"><a class="page-link" href="?page={{ last_page_number }} "><i class="fa fa-angle-right"></i><i class="fa fa-angle-right"></i></a></li>
+                </ul>
+            </div>
+            <!-- Page pagination End -->
+
+        </div>
+    </div>
+    <!-- Shop Section End -->
+
+{% endblock content %}

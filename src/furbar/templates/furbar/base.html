@@ -10,9 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'furbar/images/favicon.png' %}">
-
-    <!-- CSS
-	============================================ -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Icon Font CSS -->
     <link rel="stylesheet" href="{% static 'furbar/css/plugins/pe-icon-7-stroke.css' %}">
@@ -99,7 +97,7 @@
                     <div class="dropdown">
                         <a class="action" href="{% url 'basket' %}" >
                             <i class="pe-7s-shopbag"></i>
-                            <span class="number">{{ basket_products_count }}</span>
+                            <span class="number secondBasket">{{ basket_products_count }}</span>
                         </a>
                         
                         
@@ -158,7 +156,7 @@
                         <div class="dropdown">
                             <a class="action" href="{% url 'basket' %}" >
                                 <i class="pe-7s-shopbag"></i>
-                                <span class="number">{{ basket_products_count }}</span>
+                                <span class="number firstBasket">{{ basket_products_count }}</span>
                             </a>
                             
                            
@@ -447,9 +445,10 @@
     ============================================ -->
 
 <!-- Modernizer & jQuery JS -->
+
 <script src="{% static 'furbar/js/vendor/modernizr-3.11.2.min.js' %}"></script>
 <script src="{% static 'furbar/js/vendor/jquery-3.5.1.min.js' %}"></script>
-
+<script src="https://yastatic.net/share2/share.js"></script>
 <!-- Bootstrap JS -->
 <script src="{% static 'furbar/js/plugins/popper.min.js' %}"></script>
 <script src="{% static 'furbar/js/plugins/bootstrap.min.js' %}"></script>

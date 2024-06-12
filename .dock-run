@@ -1,0 +1,1 @@
+sudo docker run --name django -p 5432:5432 -e POSTGRES_PASSWORD=42241416 -e POSTGRES_DB=django postgres -c listen_addresses=*

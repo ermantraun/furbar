@@ -1,20 +1,387 @@
 (function ($) {
     "use strict";
 
-
     /*--
 		Header Sticky
     -----------------------------------*/
     $(window).on('scroll', function(event) {    
         var scroll = $(window).scrollTop();
         if (scroll <= 1) {
+            
             $(".header-sticky").removeClass("sticky");
         } else{
             $(".header-sticky").addClass("sticky");
         }
 	});
+    $(document).ready(function() {
+        // Edit comment
+        $('.edit-comment').on('click', function(e) {
+            e.preventDefault();
+            var commentId = $(this).data('comment-id');
+            var commentText = $('#comment-text-' + commentId).text();
+            $('#edit-comment-id').val(commentId);
+            $('#edit-comment-text').val(commentText);
+            $('#editCommentModal').modal('show');
+        });
+    
+        $('#save-comment').on('click', function() {
+            var formData = new FormData($('#edit-comment-form')[0]);
+            var commentId = $('#edit-comment-id').val();
+            $.ajax({
+                url: '/edit_comment/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#comment-text-' + commentId).text(response.text);
+                    
+                    
+                    $('#editCommentModal').modal('hide');
+                },
+                error: function(response) {
+                    console.error(response);
+                }
+            });
+        });
+    
+        // Delete comment
+        $('.delete-comment').on('click', function(e) {
+            e.preventDefault();
+            var commentId = $(this).data('comment-id');
+            $.ajax({
+                url: '/delete_comment/',
+                type: 'POST',
+                data: {
+                    'comment_id': commentId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('#single-reviews-' + commentId).remove();
+                },
+                error: function(response) {
+                    console.error(response);
+                }
+            });
+        });
+    });
+    
+    $(document).ready(function() {
+        console.log('main.js загружен и выполняется');
+    
+        function updateBasketCount(increment, targetElement) {
+            var $basketCount = $(targetElement);
+            var count = parseInt($basketCount.text()); // Преобразуем текст в число с основанием 10
+                    
+            count = count + increment;
+            $basketCount.text(count >= 0 ? count : 0); // Убеждаемся, что счетчик не станет отрицательным
+        }
+    
+        // Настройка получения CSRF токена для AJAX запросов
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+    
+        function csrfSafeMethod(method) {
+            // Эти методы HTTP не требуют защиты CSRF
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+    
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+    
+        var selectedRating = 0;
+    
+        // Обработка кликов по звездам
+        $('#rating .star').on('click', function() {
+            selectedRating = $(this).data('value');
+            $('#rating .star').each(function() {
+                if ($(this).data('value') <= selectedRating) {
+                    $(this).find('i').removeClass('fa-star-o').addClass('fa-star');
+                } else {
+                    $(this).find('i').removeClass('fa-star').addClass('fa-star-o');
+                }
+            });
+        });
+    
+        // Отправка формы через AJAX
+        $(document).ready(function() {
+            console.log('main.js загружен и выполняется');
+            
+            $('#review-images').on('change', function() {
+                var $fileInput = $(this);
+                var files = $fileInput[0].files;
+        
+                // Проверяем, был ли выбран файл
+                if (files.length > 0) {
+                    // Создаем новый input для изображения
+                    var $newInput = $('<input type="file" name="images[]" multiple>');
+                    
+                    // Прикрепляем обработчик события изменения нового input
+                    $newInput.on('change', function() {
+                        // Повторяем тот же процесс для нового input
+                        $('#review-images').trigger('change');
+                    });
+        
+                    // Вставляем новый input после последнего input для загрузки изображений
+                    $fileInput.parent().append($newInput);
+                }
+            });
 
+            function updateBasketCount(increment, targetElement) {
+                var $basketCount = $(targetElement);
+                var count = parseInt($basketCount.text()); // Преобразуем текст в число с основанием 10
+                        
+                count = count + increment;
+                $basketCount.text(count >= 0 ? count : 0); // Убеждаемся, что счетчик не станет отрицательным
+            }
+        
+            // Настройка получения CSRF токена для AJAX запросов
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            var csrftoken = getCookie('csrftoken');
+        
+            function csrfSafeMethod(method) {
+                // Эти методы HTTP не требуют защиты CSRF
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+        
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+        
+            var selectedRating = 0;
+        
+            // Обработка кликов по звездам
+            $('#rating .star').on('click', function() {
+                selectedRating = $(this).data('value');
+                $('#rating .star').each(function() {
+                    if ($(this).data('value') <= selectedRating) {
+                        $(this).find('i').removeClass('fa-star-o').addClass('fa-star');
+                    } else {
+                        $(this).find('i').removeClass('fa-star').addClass('fa-star-o');
+                    }
+                });
+            });
+            
+            // Отправка формы через AJAX
+            $('#review-form').on('submit', function(event) {
+                event.preventDefault();
+        
+                var formData = new FormData(this);
+                formData.append('vote', selectedRating);
+        
+                // Получаем значение href из тега a с id='sssa'
+              
+                var additionalPath = $('#sssa').attr('href');
+                $('input[type="file"]').not(':first').remove();
+                $.ajax({
+                    url: additionalPath,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhrFields: {
+                        withCredentials: true // Включает отправку куки с запросом
+                    },
+                    success: function(response) {
+                        var newComment = `
+    <div class="single-reviews">
+        <div class="comment-author">
+            <a href="${response.username_image}">
+                <img src="${response.username_image}" alt="UserImage">
+            </a>
+        </div>
+        <div class="comment-content">
+            <div class="author-name-rating">
+                <h6 class="name">${response.username}</h6>
+                <div class="review-star">
+                    <div class="star" style="width: ${response.vote}%;"></div>
+                </div>
+            </div>
+            <span class="date">${response.date}</span>
+            <p>${response.text}</p>`;
 
+    // Добавляем изображения через цикл
+    response.images_url.forEach(function(image) {
+        newComment += `
+            <a href="${image.large_url}">
+                <img src="${image.preview_url}" alt="CommentImage" style="border-radius: 5px;">
+            </a>`;
+    });
+
+    newComment += `
+        </div>
+    </div>`;
+                        
+                                
+                        
+                        console.log(newComment);
+                        $('.commentss').append(newComment);
+                        $('#review-form')[0].reset();
+                        selectedRating = 0;
+                        $('#rating .star i').removeClass('fa-star').addClass('fa-star-o');
+                    }
+                });
+            });
+        });
+        
+    
+        // Делегирование событий для элементов с классом bask
+        $(document).on('click', '.bask', function(event) {
+            event.preventDefault(); // предотвращает переход по ссылке
+            var $this = $(this);
+            var url;
+        
+            if ($this.hasClass('active')) {
+                url = $this.data('delete-url'); // URL для удаления
+            } else {
+                url = $this.data('add-url'); // URL для добавления
+            }
+        
+            $.ajax({
+                url: url,
+                type: 'GET', // или 'POST' в зависимости от вашего представления
+                xhrFields: {
+                    withCredentials: true // включает отправку куки с запросом
+                },
+                success: function(response) {
+                    // Обработка успешного ответа
+                    if ($this.hasClass('active')) {
+                        $this.removeClass('active');
+                        $this.css('background-color', '');
+                        $this.text('Добавить в корзину');
+                        updateBasketCount(-1, '.firstBasket');
+                        updateBasketCount(-1, '.secondBasket');
+                    } else {
+                        $this.addClass('active');
+                        $this.css('background-color', 'orange');
+                        $this.text('Убрать из корзины');
+                        updateBasketCount(1, '.firstBasket');
+                        updateBasketCount(1, '.secondBasket');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Обработка ошибки
+                    alert('Ошибка при добавлении/удалении товара из корзины');
+                }
+            });
+        });
+    
+        // Делегирование событий для элементов с классом add-to-basket
+        $(document).on('click', '.add-to-basket', function(event) {
+            event.preventDefault(); // предотвращает переход по ссылке
+            var $this = $(this);
+            var url;
+    
+            if ($this.hasClass('active')) {
+                url = $this.data('delete-url'); // URL для удаления
+            } else {
+                url = $this.data('add-url'); // URL для добавления
+            }
+    
+            $.ajax({
+                url: url,
+                type: 'GET', // или 'POST' в зависимости от вашего представления
+                xhrFields: {
+                    withCredentials: true // включает отправку куки с запросом
+                },
+                success: function(response) {
+                    // Обработка успешного ответа
+                    if ($this.hasClass('active')) {
+                        $this.removeClass('active');
+                        $this.css('background-color', '');
+                        updateBasketCount(-1, '.firstBasket');
+                        updateBasketCount(-1, '.secondBasket');
+                    } else {
+                        $this.addClass('active');
+                        $this.css('background-color', 'orange');
+                        updateBasketCount(1, '.firstBasket');
+                        updateBasketCount(1, '.secondBasket');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Обработка ошибки
+                    alert('Ошибка при добавлении/удалении товара из корзины');
+                }
+            });
+        });
+    
+        // Делегирование событий для элементов с классом add-to-wishlist
+        $(document).on('click', '.add-to-wishlist', function(event) {
+            event.preventDefault(); // предотвращает переход по ссылке
+            var $this = $(this);
+            var url;
+    
+            if ($this.hasClass('active')) {
+                url = $this.data('delete-url'); // URL для удаления
+            } else {
+                url = $this.data('add-url'); // URL для добавления
+            }
+    
+            $.ajax({
+                url: url,
+                type: 'GET', // или 'POST'
+                xhrFields: {
+                    withCredentials: true // включает отправку куки с запросом
+                },
+                success: function(response) {
+                    // Обработка успешного ответа
+                    if ($this.hasClass('active')) {
+                        $this.removeClass('active');
+                        $this.css('background-color', '');
+                    } else {
+                        $this.addClass('active');
+                        $this.css('background-color', 'orange');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Обработка ошибки
+                    alert('Ошибка при добавлении/удалении товара из избранного');
+                }
+            });
+        });
+    });
+    
+    
     /*--
 		Menu Active
     -----------------------------------*/
@@ -50,6 +417,8 @@
         Off Canvas Menu
     -----------------------------------*/
 	
+
+
   	$('.mobile-menu-open').on('click', function(){
         $('.off-canvas-box').addClass('open')
         $('.menu-overlay').addClass('open')
@@ -102,7 +471,7 @@
     var slider = new Swiper('.slider-active .swiper-container', {
         speed: 600,
         effect: "fade",
-        loop: true,
+        loop: false,
         pagination: {
             el: '.slider-active .swiper-pagination',
             clickable: true,
@@ -123,7 +492,7 @@
     var product = new Swiper('.product-active .swiper-container', {
         slidesPerView: 3,
         spaceBetween: 30,
-        loop: true,
+        loop: false,
         navigation: {
             nextEl: '.product-active .swiper-button-next',
             prevEl: '.product-active .swiper-button-prev',
@@ -151,7 +520,7 @@
     var product = new Swiper('.product-active-02 .swiper-container', {
         slidesPerView: 4,
         spaceBetween: 30,
-        loop: true,
+        loop: false,
         navigation: {
             nextEl: '.product-active-02 .swiper-button-next',
             prevEl: '.product-active-02 .swiper-button-prev',
@@ -179,7 +548,7 @@
     var product = new Swiper('.products-banner-active .swiper-container', {
         slidesPerView: 4,
         spaceBetween: 0,
-        loop: true,        
+        loop: false,        
         breakpoints: {
             0: {
                 slidesPerView: 1,
@@ -206,7 +575,7 @@
     var product = new Swiper('.blog-active .swiper-container', {
         slidesPerView: 3,
         spaceBetween: 30,
-        loop: true,
+        loop: false,
         navigation: {
             nextEl: '.blog-active .swiper-button-next',
             prevEl: '.blog-active .swiper-button-prev',
@@ -230,7 +599,7 @@
     -----------------------------------*/
     var slider = new Swiper('.testimonial-active .swiper-container', {
         speed: 600,
-        loop: true,
+        loop: false,
         pagination: {
             el: '.testimonial-active .swiper-pagination',
             clickable: true,
@@ -247,7 +616,7 @@
     var blog = new Swiper('.gallery-active .swiper-container', {
         slidesPerView: 1,
         spaceBetween: 0,
-        loop: true,
+        loop: false,
         navigation: {
             nextEl: '.gallery-active .swiper-button-next',
             prevEl: '.gallery-active .swiper-button-prev',
