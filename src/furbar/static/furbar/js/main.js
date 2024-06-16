@@ -13,6 +13,9 @@
             $(".header-sticky").addClass("sticky");
         }
 	});
+
+    
+    
     $(document).ready(function() {
         // Edit comment
         $('.edit-comment').on('click', function(e) {
@@ -27,8 +30,10 @@
         $('#save-comment').on('click', function() {
             var formData = new FormData($('#edit-comment-form')[0]);
             var commentId = $('#edit-comment-id').val();
+            var url = $('#edit-comment').attr('href');
+            console.log(url);
             $.ajax({
-                url: '/edit_comment/',
+                url: url,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -53,12 +58,17 @@
         $('.delete-comment').on('click', function(e) {
             e.preventDefault();
             var commentId = $(this).data('comment-id');
+            var url = $('#del-comment').attr('href');
             $.ajax({
-                url: '/delete_comment/',
+                url: url,
                 type: 'POST',
                 data: {
-                    'comment_id': commentId,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    'comment_id': commentId
+                    
+                },
+
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
                 },
                 success: function(response) {
                     console.log(response);
@@ -129,36 +139,30 @@
         // Отправка формы через AJAX
         $(document).ready(function() {
             console.log('main.js загружен и выполняется');
-            
+        
             $('#review-images').on('change', function() {
                 var $fileInput = $(this);
                 var files = $fileInput[0].files;
         
-                // Проверяем, был ли выбран файл
                 if (files.length > 0) {
-                    // Создаем новый input для изображения
                     var $newInput = $('<input type="file" name="images[]" multiple>');
-                    
-                    // Прикрепляем обработчик события изменения нового input
+        
                     $newInput.on('change', function() {
-                        // Повторяем тот же процесс для нового input
                         $('#review-images').trigger('change');
                     });
         
-                    // Вставляем новый input после последнего input для загрузки изображений
                     $fileInput.parent().append($newInput);
                 }
             });
-
+        
             function updateBasketCount(increment, targetElement) {
                 var $basketCount = $(targetElement);
-                var count = parseInt($basketCount.text()); // Преобразуем текст в число с основанием 10
-                        
+                var count = parseInt($basketCount.text());
+        
                 count = count + increment;
-                $basketCount.text(count >= 0 ? count : 0); // Убеждаемся, что счетчик не станет отрицательным
+                $basketCount.text(count >= 0 ? count : 0);
             }
         
-            // Настройка получения CSRF токена для AJAX запросов
             function getCookie(name) {
                 var cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
@@ -176,7 +180,6 @@
             var csrftoken = getCookie('csrftoken');
         
             function csrfSafeMethod(method) {
-                // Эти методы HTTP не требуют защиты CSRF
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             }
         
@@ -190,7 +193,6 @@
         
             var selectedRating = 0;
         
-            // Обработка кликов по звездам
             $('#rating .star').on('click', function() {
                 selectedRating = $(this).data('value');
                 $('#rating .star').each(function() {
@@ -201,17 +203,20 @@
                     }
                 });
             });
-            
-            // Отправка формы через AJAX
+        
             $('#review-form').on('submit', function(event) {
                 event.preventDefault();
         
                 var formData = new FormData(this);
                 formData.append('vote', selectedRating);
         
-                // Получаем значение href из тега a с id='sssa'
-              
-                var additionalPath = $('#sssa').attr('href');
+                var additionalPath = $('#add-comment').attr('href');
+                var model = $('#add-comment').attr('model');
+                var objId = $('#add-comment').attr('obj_id');
+        
+                formData.append('model', model);
+                formData.append('obj_id', objId);
+        
                 $('input[type="file"]').not(':first').remove();
                 $.ajax({
                     url: additionalPath,
@@ -220,40 +225,43 @@
                     processData: false,
                     contentType: false,
                     xhrFields: {
-                        withCredentials: true // Включает отправку куки с запросом
+                        withCredentials: true
                     },
                     success: function(response) {
                         var newComment = `
-    <div class="single-reviews">
-        <div class="comment-author">
-            <a href="${response.username_image}">
-                <img src="${response.username_image}" alt="UserImage">
-            </a>
-        </div>
-        <div class="comment-content">
-            <div class="author-name-rating">
-                <h6 class="name">${response.username}</h6>
-                <div class="review-star">
-                    <div class="star" style="width: ${response.vote}%;"></div>
+        <div id="single-reviews-${response.comment_id}" class="single-reviews">
+            <div class="comment-author">
+                <a href="${response.username_image}">
+                    <img src="${response.username_image}" alt="UserImage">
+                </a>
+            </div>
+            <div class="comment-content">
+                <div class="author-name-rating">
+                    <h6 class="name">${response.username}</h6>
+                    <div class="review-star">
+                        <div class="star" style="width: ${response.vote}%;"></div>
+                    </div>
+                </div>
+                <span class="date">${response.date}</span>
+                <p id="comment-text-${response.comment_id}">${response.text}</p>`;
+        
+                        response.images_url.forEach(function(image) {
+                            newComment += `
+                <a href="${image.large_url}">
+                    <img src="${image.preview_url}" alt="CommentImage" style="border-radius: 5px;">
+                </a>`;
+                        });
+        
+                        newComment += `
+                <p></p>
+                <p></p>
+                <div class="comment-actions">
+                    <a href="#" class="edit-comment" data-comment-id="${response.comment_id}"><i class="fa fa-edit"></i></a>
+                    <a href="#" class="delete-comment" data-comment-id="${response.comment_id}"><i class="fa fa-trash"></i></a>
                 </div>
             </div>
-            <span class="date">${response.date}</span>
-            <p>${response.text}</p>`;
-
-    // Добавляем изображения через цикл
-    response.images_url.forEach(function(image) {
-        newComment += `
-            <a href="${image.large_url}">
-                <img src="${image.preview_url}" alt="CommentImage" style="border-radius: 5px;">
-            </a>`;
-    });
-
-    newComment += `
-        </div>
-    </div>`;
-                        
-                                
-                        
+        </div>`;
+        
                         console.log(newComment);
                         $('.commentss').append(newComment);
                         $('#review-form')[0].reset();
@@ -262,7 +270,68 @@
                     }
                 });
             });
+        
+            // Edit comment with event delegation
+            $('.commentss').on('click', '.edit-comment', function(e) {
+                e.preventDefault();
+                var commentId = $(this).data('comment-id');
+                var commentText = $('#comment-text-' + commentId).text();
+                $('#edit-comment-id').val(commentId);
+                $('#edit-comment-text').val(commentText);
+                $('#editCommentModal').modal('show');
+            });
+        
+            $('#save-comment').on('click', function() {
+                var formData = new FormData($('#edit-comment-form')[0]);
+                var commentId = $('#edit-comment-id').val();
+                var url = $('#edit-comment').attr('href');
+                console.log(url);
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('#comment-text-' + commentId).text(response.text);
+                        $('#editCommentModal').modal('hide');
+                    },
+                    error: function(response) {
+                        console.error(response);
+                    }
+                });
+            });
+        
+            // Delete comment with event delegation
+            $('.commentss').on('click', '.delete-comment', function(e) {
+                e.preventDefault();
+                var commentId = $(this).data('comment-id');
+                var url = $('#del-comment').attr('href');
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        'comment_id': commentId
+                    },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('#single-reviews-' + commentId).remove();
+                    },
+                    error: function(response) {
+                        console.error(response);
+                    }
+                });
+            });
         });
+        
+        
         
     
         // Делегирование событий для элементов с классом bask

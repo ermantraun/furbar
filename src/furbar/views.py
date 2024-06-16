@@ -39,6 +39,8 @@ def is_convertible_to_number(number):
     except ValueError:
         return False
 
+
+
 def get_paginator(objects, page_number, per_page, page_button_range):
     if page_button_range % 2 == 0:
         raise ValueError('“page_button_range” must be an odd number')
@@ -101,30 +103,35 @@ def basket_add(request, article):
     
 
     product = get_object_or_404(models.Product, article=article)
-    
-    request.user.basket.products.add(product)
+    if product not in request.user.basket.products.all():
+        request.user.basket.products.add(product)
     return HttpResponse("ok")
 
 def basket_delete(request, article):
     
 
     product = get_object_or_404(models.Product, article=article)
-    
-    request.user.basket.products.remove(product)
+    if product in request.user.basket.products.all():
+        request.user.basket.products.remove(product)
     return HttpResponse("ok")
-def wishlist(request, article):
-    pass
+def wishlist(request):
+    
+    
+    
+    return render(request, 'furbar/wishlist.html', context = {
+        
+    })
 
 def wishlist_add(request, article):
     product = get_object_or_404(models.Product, article=article)
-        
-    request.user.wishlist.products.add(product)
+    if product not in request.user.wishlist.products.all():
+        request.user.wishlist.products.add(product)
     return HttpResponse("ok")
 
 def wishlist_delete(request, article):
     product = get_object_or_404(models.Product, article=article)
-    
-    request.user.wishlist.products.remove(product)
+    if product in request.user.wishlist.products.all():
+        request.user.wishlist.products.remove(product)
     return HttpResponse("ok")
 def mailing(request):
     pass
@@ -263,57 +270,85 @@ def shop(request):
     })
 
 
-def add_comment(request, model, obj_id):
-    c_type = get_object_or_404(ContentType, model=model, app_label=FurbarConfig.name)
-    model = apps.apps.get_model(FurbarConfig.name, model)
-    obj = get_object_or_404(model, id=obj_id)
-    
-    if request.method == 'POST' and obj.commentsAllowed(request.user):
-        vote = request.POST.get('vote')
-        if vote:
-            vote = int(vote[0])
-            if vote >= 1 and vote <= 5:
-                vote = int((vote / 5) * 100)
-                text = request.POST.get('text')
-                
-                images = request.FILES.getlist('images[]')
-                
-                
-                comment = models.Comment(content_type=c_type, object_id=obj_id, user=request.user, 
-                                vote=vote, text=text)
-                comment.save()
-                
-                if images:
-                    for image in images[0:4]:
-
-                        models.CommentImage(comment=comment, large=image).save()
-                
-                response = {
-                    "username": request.user.username,
-                    "username_image": request.user.image.preview.url,
-                    "date": comment.date.strftime('%B %d, %Y'),
-                    "vote": comment.vote,
-                    "text": comment.text,
-                    "images_url": [{'preview_url': image.preview.url, 'large_url': image.large.url} 
-                                   for image in comment.images.all()]
+def add_comment(request):
+    model_name = request.POST.get('model').split()[0].lower()
+    obj_id = request.POST.get('obj_id')
+    if model_name is not None and obj_id is not None:
+        c_type = get_object_or_404(ContentType, model=model_name, app_label=FurbarConfig.name)
+        model = apps.apps.get_model(FurbarConfig.name, model_name)
+        obj = get_object_or_404(model, id=obj_id)
+        
+        if request.method == 'POST' and obj.commentsAllowed(request.user):
+            vote = request.POST.get('vote')
+            if vote:
+                vote = int(vote[0])
+                if vote >= 1 and vote <= 5:
+                    vote = int((vote / 5) * 100)
+                    text = request.POST.get('text', '')
                     
-                }
-                print(response)
-                return JsonResponse(response)
+                    images = request.FILES.getlist('images[]', [])
+                    
+                    
+                    comment = models.Comment(content_type=c_type, object_id=obj_id, user=request.user, 
+                                    vote=vote, text=text)
+                    comment.save()
+                    
+                    if images:
+                        for image in images[0:4]:
+
+                            models.CommentImage(comment=comment, large=image).save()
+                    
+                    response = {
+                        "username": request.user.username,
+                        "username_image": request.user.image.preview.url,
+                        "date": comment.date.strftime('%B %d, %Y'),
+                        "vote": comment.vote,
+                        "comment_id": comment.id,
+                        "text": comment.text,
+                        "images_url": [{'preview_url': image.preview.url, 'large_url': image.large.url} 
+                                    for image in comment.images.all()]
+                        
+                    }
+                    return JsonResponse(response)
             
     return JsonResponse({'status': 'fail'})
 
+def edit_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST.get('comment_id')
+        text = request.POST.get('text')
+        if comment_id is not None and text is not None:
+            comment = get_object_or_404(models.Comment, id=comment_id)
+            if comment.editAllowed(request.user):
+                comment.text = text
+                comment.save()
+                return JsonResponse({'text': text})
+            
+    return JsonResponse({'status': 'fail'})
+def del_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST.get('comment_id')
+        if comment_id is not None:
+            comment = get_object_or_404(models.Comment, id=comment_id)
+            if comment.editAllowed(request.user):
+                comment.delete()
+                
+                return JsonResponse({'status': 'ok'})
+            
+    return JsonResponse({'status': 'fail'})
 
 def product(request, article):
     
     product = get_object_or_404(models.Product, article=article)
-    user_comments = request.user.getUserComments(product)
+    user_comments = models.Comment.getUserComments(product, request.user)
     commentsAllowed = product.commentsAllowed(request.user)
+    related_products = product.related_products(15)
     
     return render(request, "furbar/product-details.html", {
         'product':product,
         'user_comments': user_comments,
-        'commentsAllowed': commentsAllowed
+        'commentsAllowed': commentsAllowed,
+        'related_products': related_products
     })
 
 

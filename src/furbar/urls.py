@@ -29,6 +29,12 @@ blog = [
     path('<int:article>', views.blog, name='article')
 ]
 
+comment = [
+    path('add/', views.add_comment, name='add_comment'),
+    path('edit/', views.edit_comment, name='edit_comment'),
+    path('del/', views.del_comment, name='del_comment'),
+]
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('profile/', include(profile), name='profile'),
@@ -39,7 +45,8 @@ urlpatterns = [
     path('basket/', include(basket)),
     path('wishlist/', include(wishlist)),
     path('mailing/', views.mailing, name='mailing'),
-    path('add_comment/<str:model>/<int:obj_id>', views.add_comment, name='add_comment')
+    path('comment/', include(comment), name='')
+    
 ]
 
 

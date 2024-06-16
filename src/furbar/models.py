@@ -62,8 +62,7 @@ class User(AbstractUser, CustomUserManager):
         super().save(force_insert=force_insert, force_update=force_update, 
                          using=using, update_fields=update_fields,)
 
-    def getUserComments(self, model):
-        return model.comments.filter(user=self)
+        
 
 class Category(models.Model):
     parent = models.OneToOneField("Category", on_delete=models.SET_NULL, null=True, blank=True)
@@ -150,6 +149,12 @@ class Product(models.Model):
     rating = models.IntegerField(default=0, blank=True)
     vote_count = models.PositiveIntegerField(default=0, blank=True)
     
+    
+    def related_products(self, count):
+        tags = list(map(lambda x: x.name, self.tags.all()))
+        related_products = Product.objects.filter(tags__name__in=tags).exclude(id=self.id)
+        return related_products[0:count]
+    
     def commentsAllowed(self, user):
         if (user.is_authenticated and self in user.buy.products.all() and 
             self.comments.filter(user=user).count() < 1):
@@ -175,6 +180,14 @@ class Product(models.Model):
             return True
         else:
             return False
+    
+    @property
+    def truncated_description(self):
+        if len(self.description) > 20:
+            return self.description[:20] + '...'
+        
+        return self.description
+
     
     @property 
     def discounted_price(self):
@@ -274,10 +287,15 @@ class Comment(models.Model):
     text = models.TextField(default='')
 
     def editAllowed(self, user):
-        if user.is_authenticated and user == self.user:
+        if user == self.user:
             return True
         else:
             return False
+
+    @staticmethod 
+    def getUserComments(ctype, user):
+        if user.is_authenticated:
+            return ctype.comments.filter(user=user)
 
 class Order(models.Model):
     date = models.DateField(auto_now_add=True)

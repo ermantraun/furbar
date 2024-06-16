@@ -1,0 +1,131 @@
+{% extends "furbar/base.html" %}
+{% load static %}
+{% block title %} Wishlist {% endblock title %}
+{% block content %}
+
+    <div class="menu-overlay"></div>
+
+    <!-- Page Banner Section Start -->
+    <div class="section page-banner-section" style="background-image: url({% static "furbar/images/page-banner.jpg" %});">
+        <div class="container">
+
+            <!-- Page Banner Content End -->
+            <div class="page-banner-content">
+                <h2 class="title">Избранное</h2>
+
+                <ul class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Домой</a></li>
+                    <li class="active">Избранное</li>
+                </ul>
+            </div>
+            <!-- Page Banner Content End -->
+
+        </div>
+    </div>
+    <!-- Page Banner Section End -->
+
+    <!-- Shopping Cart Section Start -->
+    <div class="section section-padding">
+        <div class="container">
+            <div class="cart-wrapper">
+                <!-- Cart Wrapper Start -->
+                <div class="cart-table table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="product-thumb">Изображение</th>
+                                <th class="product-info">Описание</th>
+                                <th class="product-total-price">Цена</th>
+                                
+                                <th class="product-add-to-cart">Добавить в корзину</th>
+                                <th class="product-del-to-cart">Удалить из избранного</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in wishlist %}
+                            <tr>
+                                
+                                <td class="product-thumb">
+                                    <img src="{{ product.first_image.preview.url }}" alt="ProductImage">
+                                </td>
+                                <td class="product-info">
+                                    <h6 class="name"><a href="{% url "product-details" article=product.article %}">{{ product.name }}</a></h6>
+                                    <div class="product-prices">
+                                        {% if product.has_discount %}
+                            <span class="sale-price" >{{product.discounted_price}}₽</span> &nbsp;
+                            <span class="old-price" ><strike>{{ product.price }}</strike></span>
+                            {% else %}
+                            <span class="sale-price">{{ product.price }}</span>
+                            {% endif %} 
+                                    </div>
+                                    <div class="product-size-color">
+                                        <p>{{product.truncated_description}}</p>
+                                    </div>
+                                </td>
+                                <td class="product-total-price">
+                                    <span class="price">
+                                        {% if product.has_discount %}
+                            <span class="sale-price" >{{product.discounted_price}}₽</span> 
+                          
+                            {% else %}
+                            <span class="sale-price">{{ product.price }}</span>
+                            {% endif %} 
+
+                                    </span>
+                                </td>
+                                <td class="product-add-to-cart">
+                                    <div class="meta-action">
+                                        <button class="btn bask btn-dark btn-hover-primary {% if product in basket %}active{% endif %}" 
+                                        {% if product in basket %}style="background-color:orange;"{% endif %}
+                                        data-add-url="{% url 'basket_add' article=product.article %}"
+                                        data-delete-url="{% url 'basket_delete' article=product.article %}">
+                                        {% if product in basket %} Убрать из корзины {% else %} Добавить в корзину {% endif %}
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="product-action">
+                                    <a href="{% url "wishlist_delete" article=product.article %}" class="remove" id="product-{{product.article}}"><i class="pe-7s-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                </div>
+                <!-- Cart Wrapper End -->
+            </div>
+        </div>
+    </div>
+    <!-- Shopping Cart Section End -->
+
+
+    <script>
+        $(document).ready(function() {
+            $('.remove').on('click', function(e) {
+                e.preventDefault(); // Предотвращаем переход по ссылке
+                var url = $(this).attr('href'); // Получаем URL из атрибута href
+                var productRow = $(this).closest('tr'); // Находим родительский элемент <tr> для удаления
+        
+                if (confirm('Вы уверены, что хотите удалить этот продукт?')) { // Подтверждение удаления
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        success: function(response) {
+                            // Предполагаем, что сервер возвращает JSON-ответ с полем success
+                            
+                                productRow.fadeOut(300, function() { // Плавное исчезновение строки
+                                    $(this).remove(); // Удаляем строку продукта из таблицы
+                                });
+                            
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(error); // Логируем ошибку в консоль для отладки
+                            alert('Ошибка при выполнении запроса. Попробуйте еще раз.');
+                        }
+                    });
+                }
+            });
+        });
+        </script>
+
+    {% endblock content %}

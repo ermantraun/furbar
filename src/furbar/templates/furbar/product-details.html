@@ -141,7 +141,7 @@
                             <div class="single-info">
                                 <span class="lable">Теги:</span>
                                 {% for tag in product.tags.all %}
-                                <span class="value"><a href="{% url "shop" %}?tag={{ tag.name }}">{{tag.name}}</a></span>
+                                <span class="value"><a href="{% url "shop" %}?tags[]={{ tag.name }}">{{tag.name}}</a></span>
                                 {% endfor %}
                             </div>
                             <div class="single-info">
@@ -195,6 +195,8 @@
                             <!-- Review Comment Start  -->
                             <div class="reviews-comment">
                                 <div class="commentss">
+                                    <a id='edit-comment' href="{% url "edit_comment" %}"></a>
+                                    <a id='del-comment' href="{% url "del_comment" %}"></a>
                                     {% for comment in product.comments.all %}
                                     <div class="single-reviews" id="single-reviews-{{ comment.id }}">
                                         <div class="comment-author">
@@ -226,6 +228,7 @@
                                                 <a href="#" class="edit-comment" data-comment-id="{{ comment.id }}"><i class="fa fa-edit"></i></a>
                                                 <a href="#" class="delete-comment" data-comment-id="{{ comment.id }}"><i class="fa fa-trash"></i></a>
                                             </div>
+                                            
                                             {% endif %}
                                         </div>
                                     </div>
@@ -273,47 +276,51 @@
                         
                                 <!-- Single Comment End  -->
                                 
-                            {% if commentsAllowed %}
-                            <!-- Review Form Start  -->
-                            <div class="reviews-form">
-                                <h3 class="reviews-title">Добавить отзыв</h3>
-                                <form id="review-form" enctype="multipart/form-data">
-                                    <a id="sssa" href="{% url 'add_comment' model='product' obj_id=product.id %}"></a>
-                                    <div class="col-md-12">
-                                        <div class="review-rating">
-                                            <label class="title">Рейтинг:</label>
-                                            <ul id="rating" class="rating">
-                                                <li class="star" title="Poor" data-value="1"><i class="fa fa-star-o"></i></li>
-                                                <li class="star" title="Poor" data-value="2"><i class="fa fa-star-o"></i></li>
-                                                <li class="star" title="Poor" data-value="3"><i class="fa fa-star-o"></i></li>
-                                                <li class="star" title="Poor" data-value="4"><i class="fa fa-star-o"></i></li>
-                                                <li class="star" title="Poor" data-value="5"><i class="fa fa-star-o"></i></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="single-form">
-                                            <textarea id="review-text" name="text" placeholder="Напишите ваши комментарии здесь"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="single-form">
-                                            <input type="file" id="review-images" name="images[]" multiple>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="single-form">
-                                            <button type="submit" class="btn btn-dark btn-hover-primary">Отправить отзыв</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            {% else %}
-                            <div class="alert alert-info mt-10" role="alert">
-                                <h6 class="alert-heading">Комментарий могут оставить только авторизованные пользователи, которые купили данный товар.</h6>
-                                <p>Пожалуйста, войдите в систему и подтвердите покупку, чтобы оставить отзыв. Каждый пользователь может оставить только один комментарий к каждому товару.</p>
-                            </div>
-                            {% endif %}
+                                <div id="review-container">
+    {% if commentsAllowed %}
+    <!-- Контейнер для формы добавления отзыва -->
+    <div id="add-review-container" class="reviews-form">
+        <h3 class="reviews-title">Добавить отзыв</h3>
+        <form id="review-form" enctype="multipart/form-data">
+            <a id="add-comment" model="{{ product }}" obj_id="{{ product.id }}" href="{% url 'add_comment' %}"></a>
+            <div class="col-md-12">
+                <div class="review-rating">
+                    <label class="title">Рейтинг:</label>
+                    <ul id="rating" class="rating">
+                        <li class="star" title="Poor" data-value="1"><i class="fa fa-star-o"></i></li>
+                        <li class="star" title="Poor" data-value="2"><i class="fa fa-star-o"></i></li>
+                        <li class="star" title="Poor" data-value="3"><i class="fa fa-star-o"></i></li>
+                        <li class="star" title="Poor" data-value="4"><i class="fa fa-star-o"></i></li>
+                        <li class="star" title="Poor" data-value="5"><i class="fa fa-star-o"></i></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="single-form">
+                    <textarea id="review-text" name="text" placeholder="Напишите ваши комментарии здесь"></textarea>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="single-form">
+                    <input type="file" id="review-images" name="images[]" multiple>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="single-form">
+                    <button type="submit" class="btn btn-dark btn-hover-primary">Отправить отзыв</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <!-- Контейнер для сообщения -->
+    <div id="review-info-container" class="reviews-form alert alert-info mt-10" role="alert">
+        <h6 class="alert-heading">Комментарий могут оставить только авторизованные пользователи, которые купили данный товар.</h6>
+        <p>Пожалуйста, войдите в систему и подтвердите покупку, чтобы оставить отзыв. Каждый пользователь может оставить только один комментарий к каждому товару.</p>
+    </div>
+    {% endif %}
+</div>
+                                
                             
                             <!-- Review Form End  -->
 
@@ -340,18 +347,12 @@
 
                         <!-- Section Title Start -->
                         <div class="section-title">
-                            <h2 class="title"># Related Products</h2>
+                            <h2 class="title">Похожие товары</h2>
                         </div>
                         <!-- Section Title End -->
 
                         <!-- Product Menu Start -->
-                        <div class="product-menu">
-                            <ul class="nav">
-                                <li><button class="active" data-bs-toggle="tab" data-bs-target="#tab7">All Time</button></li>
-                                <li><button data-bs-toggle="tab" data-bs-target="#tab8">This Year</button></li>
-                                <li><button data-bs-toggle="tab" data-bs-target="#tab9">This Month</button></li>
-                            </ul>
-                        </div>
+                        
                         <!-- Product Menu End -->
 
                         <!-- Swiper Arrows End -->
@@ -373,235 +374,48 @@
                                     <div class="swiper-wrapper">
                                         <div class="swiper-slide">
                                             <!-- Single Product Start -->
+                                            {% for product in related_products %}
                                             <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-07.jpg" %}" alt="product"></a>
+                                                <a href="{% url "product-details" article=product.article %}"><img src="{{ product.first_image.preview.url }}" alt="product"></a>
                                                 <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Wooden decorations</a></h4>
+                                                    <h4 class="title"><a href="{% url "product-details" article=product.article %}">{{ product.name }}</a></h4>
                                                     <div class="price">
-                                                        <span class="sale-price">$240.00</span>
+                                                        {% if product.has_discount %}
+                                                        <span class="sale-price" >{{product.discounted_price}}₽</span> &nbsp;
+                                                        <span class="sale-price old-price" ><strike>{{ product.price }}</strike></span>
+                                                        {% else %}
+                                                        <span class="sale-price">{{ product.price }}</span>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                                 <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
+                                                    <li>
+                                                        <a class="action add-to-basket {% if product in basket %}active{% endif %}" 
+                                                           href="" {% if product in basket %}style="background-color:orange;"{% endif %} data-add-url="{% url 'basket_add' article=product.article %}" 
+                                                           data-delete-url="{% url 'basket_delete' article=product.article %}">
+                                                            <i class="pe-7s-shopbag"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="action add-to-wishlist {% if product in wishlist %}active{% endif %}" 
+                                                           href="" {% if product in wishlist %}style="background-color:orange;"{% endif %} data-add-url="{% url 'wishlist_add' article=product.article %}" 
+                                                           data-delete-url="{% url 'wishlist_delete' article=product.article %}">
+                                                            <i class="pe-7s-like"></i>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </div>
+                                            {% endfor %}
                                             <!-- Single Product End -->
                                         </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-08.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Herman Seater Sofa</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
+                                        
                                             <!-- Single Product End -->
                                         </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-09.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Reece Seater Sofa</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-10.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Round Swivel Chair</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="tab8">
-                                <div class="swiper-container">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-01.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Elona bedside grey table</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-02.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Simple minimal Chair</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-03.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Pendant Chandelier Light</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-04.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">High quality vase bottle</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="tab9">
-                                <div class="swiper-container">
-                                    <div class="swiper-wrapper">
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-04.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">High quality vase bottle</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-03.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Pendant Chandelier Light</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-01.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Elona bedside grey table</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                        <div class="swiper-slide">
-                                            <!-- Single Product Start -->
-                                            <div class="single-product">
-                                                <a href="#"><img src="{% static "furbar/images/product/product-10.jpg" %}" alt="product"></a>
-                                                <div class="product-content">
-                                                    <h4 class="title"><a href="product-details.html">Round Swivel Chair</a></h4>
-                                                    <div class="price">
-                                                        <span class="sale-price">$240.00</span>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-meta">
-                                                    <li><a class="action" data-bs-toggle="modal" data-bs-target="#quickView" href="#"><i class="pe-7s-search"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-shopbag"></i></a></li>
-                                                    <li><a class="action" href="#"><i class="pe-7s-like"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <!-- Single Product End -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                     <!-- Product Tabs Content End -->
