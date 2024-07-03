@@ -1,0 +1,439 @@
+{% extends "furbar/base.html" %}
+{% load static %}
+{% block title %} Оформление заказа {% endblock title %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<div class="menu-overlay"></div>
+
+<!-- Page Banner Section Start -->
+<div class="section page-banner-section" style="background-image: url({% static 'furbar/images/page-banner.jpg' %});">
+    <div class="container">
+
+        <!-- Page Banner Content End -->
+        <div class="page-banner-content">
+            <h2 class="title">Оформление заказа</h2>
+
+            <ul class="breadcrumb">
+                <li><a href="{% url 'index' %}">Домой</a></li>
+                <li><a href="{% url 'basket' %}">Корзина</a></li>
+                <li class="active">Оформление заказа</li>
+            </ul>
+        </div>
+        <!-- Page Banner Content End -->
+
+    </div>
+</div>
+<!-- Page Banner Section End -->
+
+<!-- Checkout Section Start -->
+<div class="section section-padding">
+    <!-- Delivery Cost Modal -->
+    <div class="modal fade" id="deliveryCostModal" tabindex="-1" role="dialog" aria-labelledby="deliveryCostModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deliveryCostModalLabel">Подтверждение стоимости доставки</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Стоимость доставки: <span id="deliveryCost"></span>. Вы согласны?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="confirmOrder">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <script>
+            $(document).ready(function() {
+                $('#warehouse').select2({
+                    placeholder: "Выберите склад",
+                    allowClear: true,
+                    width: '100%'
+                });
+
+                // Function to validate email
+                function validateEmail(email) {
+                    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return re.test(email);
+                }
+
+                // Function to validate phone number
+                function validatePhone(phone) {
+                    var re = /^[0-9\s\-]+$/;
+                    return re.test(phone);
+                }
+
+                // Function to validate postal code
+                function validatePostalCode(postalCode) {
+                    var re = /^[0-9]{5,6}$/;
+                    return re.test(postalCode);
+                }
+
+                // Function to validate names
+                function validateName(name) {
+                    var re = /^[a-zA-Zа-яА-Я\s\-]+$/;
+                    return re.test(name);
+                }
+
+                // Handle form submission
+                $('.btn-hover-dark').click(function(e) {
+                    e.preventDefault();
+
+                    // Validate required fields
+                    let isValid = true;
+                    $('.error-message').remove();
+
+                    $('input[placeholder*="*"]').each(function() {
+                        if ($(this).val() === '') {
+                            isValid = false;
+                            $(this).addClass('is-invalid');
+                            $(this).after('<span class="error-message" style="color:red;"><p/> Это поле обязательно для заполнения</span>');
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    });
+
+                    // Validate email
+                    let email = $('input[placeholder="Электронная почта (email) *"]').val();
+                    if (!validateEmail(email)) {
+                        isValid = false;
+                        $('input[placeholder="Электронная почта (email) *"]').addClass('is-invalid');
+                        $('input[placeholder="Электронная почта (email) *"]').after('<span class="error-message" style="color:red;">Введите действительный email</span>');
+                    } else {
+                        $('input[placeholder="Электронная почта (email) *"]').removeClass('is-invalid');
+                    }
+
+                    // Validate phone
+                    let phone = $('input[placeholder="Телефон *"]').val();
+                    if (!validatePhone(phone)) {
+                        isValid = false;
+                        $('input[placeholder="Телефон *"]').addClass('is-invalid');
+                        $('input[placeholder="Телефон *"]').after('<span class="error-message" style="color:red;">Введите действительный номер телефона</span>');
+                    } else {
+                        $('input[placeholder="Телефон *"]').removeClass('is-invalid');
+                    }
+
+                    // Validate names
+                    let firstName = $('input[placeholder="Имя *"]').val();
+                    let lastName = $('input[placeholder="Фамилия *"]').val();
+                    if (!validateName(firstName)) {
+                        isValid = false;
+                        $('input[placeholder="Имя *"]').addClass('is-invalid');
+                        $('input[placeholder="Имя *"]').after('<span class="error-message" style="color:red;">Введите действительное имя</span>');
+                    } else {
+                        $('input[placeholder="Имя *"]').removeClass('is-invalid');
+                    }
+                    if (!validateName(lastName)) {
+                        isValid = false;
+                        $('input[placeholder="Фамилия *"]').addClass('is-invalid');
+                        $('input[placeholder="Фамилия *"]').after('<span class="error-message" style="color:red;">Введите действительную фамилию</span>');
+                    } else {
+                        $('input[placeholder="Фамилия *"]').removeClass('is-invalid');
+                    }
+
+                    {% if delivery == 'house' %}
+                    let city = $('input[placeholder="Город *"]').val();
+                    if (city !== '' && !validateName(city)) {
+                        isValid = false;
+                        $('input[placeholder="Город *"]').addClass('is-invalid');
+                        $('input[placeholder="Город *"]').after('<span class="error-message" style="color:red;">Введите действительный город</span>');
+                    } else {
+                        $('input[placeholder="Город *"]').removeClass('is-invalid');
+                    }
+                    
+                    // Validate postal code
+                    let postalCode = $('input[placeholder="Почтовый индекс/ZIP *"]').val();
+                    if (postalCode !== '' && !validatePostalCode(postalCode)) {
+                        isValid = false;
+                        $('input[placeholder="Почтовый индекс/ZIP *"]').addClass('is-invalid');
+                        $('input[placeholder="Почтовый индекс/ZIP *"]').after('<span class="error-message" style="color:red;">Введите действительный почтовый индекс</span>');
+                    } else {
+                        $('input[placeholder="Почтовый индекс/ZIP *"]').removeClass('is-invalid');
+                    }
+                    {% endif %}
+                    // Check if a payment type is selected
+                    if (!$('input[name="radio"]:checked').length) {
+                        isValid = false;
+                        alert('Пожалуйста, выберите тип оплаты.');
+                    }
+
+                    if (!isValid) {
+                        alert('Пожалуйста, заполните все обязательные поля и исправьте ошибки.');
+                        return;
+                    }
+
+                    // Gather form data
+                    let formData = {
+                        first_name: firstName,
+                        last_name: lastName,
+                        country: $('input[placeholder="Страна"]').val(),
+                        phone: phone,
+                        email: email,
+                        delivery: '{{ delivery }}',
+                        products: {},
+                        payment_type: $('input[name="radio"]:checked').attr('id'),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    };
+
+                    {% if delivery == 'house' %}
+                        formData.address = {
+                            street: $('input[placeholder="Улица *"]').val(),
+                            apartment: $('input[placeholder="Квартира, люкс, блок и т.д. (по желанию)"]').val(),
+                            city: $('input[placeholder="Город *"]').val(),
+                            postcode: postalCode
+                        };
+
+                        // Make AJAX GET request to check delivery cost with postal code
+                        $.get('{% url "check_delivery_cost" %}', { 'postal_code': postalCode }, function(response) {
+                            $('#deliveryCost').text(response.cost);
+                            $('#deliveryCostModal').modal('show');
+                        });
+
+                    {% else %}
+                        formData.warehouse = $('#warehouse').val();
+                        {% for product in products %}
+                        formData.products.push({
+                            'article': '{{ product.product.article }}',
+                            'quantity': {{ product.quantity }}
+                        });
+                        {% endfor %}
+                        // Make AJAX POST request to place the order
+                        $.post('{% url "place_order" %}', formData, function(response) {
+                            alert('Заказ успешно оформлен!');
+                            window.location.href = "{% url 'basket' %}";
+                            // You can redirect or update the page here
+                        }).fail(function(jqXHR, textStatus, errorThrown) {
+                            var errorMessage = 'Ошибка при оформлении заказа.';
+                            if (jqXHR.responseJSON && jqXHR.responseJSON.error_message) {
+                                errorMessage += ' ' + jqXHR.responseJSON.error_message;
+                            }
+                            alert(errorMessage + ' Пожалуйста, попробуйте позже.');
+                        });
+                                            {% endif %}
+                });
+
+                // Handle order confirmation in modal
+                $('#confirmOrder').click(function() {
+                    // Gather form data again for submission
+                    let formData = {
+                        first_name: $('input[placeholder="Имя *"]').val(),
+                        last_name: $('input[placeholder="Фамилия *"]').val(),
+                        country: $('input[placeholder="Страна"]').val(),
+                        phone: $('input[placeholder="Телефон *"]').val(),
+                        email: $('input[placeholder="Электронная почта (email) *"]').val(),
+                        delivery: '{{ delivery }}',
+                        products: [],
+                        payment_type: $('input[name="radio"]:checked').attr('id'),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    };
+
+                    {% if delivery == 'house' %}
+                        
+                    formData.street = $('input[placeholder="Улица *"]').val();
+                    formData.apartment = $('input[placeholder="Квартира, люкс, блок и т.д. (по желанию)"]').val();
+                    formData.city = $('input[placeholder="Город *"]').val();
+                    formData.postcode = $('input[placeholder="Почтовый индекс/ZIP *"]').val();
+                        
+                    {% else %}
+                        formData.warehouse = $('#warehouse').val();
+                    {% endif %}
+
+                    {% for product in products %}
+                    formData.products.push({
+                        'article': '{{ product.product.article }}',
+                        'quantity': {{ product.quantity }}
+                    });
+                    {% endfor %}
+
+                    // Make AJAX POST request to place the order
+                    $.ajax({
+                        url: '{% url "place_order" %}',
+                        type: 'POST',
+                        data: JSON.stringify(formData),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function(response) {
+                            alert('Заказ успешно оформлен!');
+                            window.location.href = "{% url 'basket' %}";
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            let errorMessage = 'Ошибка при оформлении заказа.';
+                            if (jqXHR.responseJSON && jqXHR.responseJSON.error_message) {
+                                errorMessage += ' ' + jqXHR.responseJSON.error_message;
+                            }
+                            alert(errorMessage + ' Пожалуйста, попробуйте позже.');
+                        }
+                    });
+                
+
+                    // Hide the modal
+                    $('#deliveryCostModal').modal('hide');
+                });
+            });
+        </script>
+
+        <form action="#">
+            <div class="row">
+                <div class="col-lg-7">
+                    <!-- Checkout Form Start -->
+                    <div class="checkout-form">
+                        <div class="checkout-title">
+                            <h4 class="title">Информация заказа</h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="single-form">
+                                    <input type="text" placeholder="Имя *" name="first_name">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="single-form">
+                                    <input type="text" placeholder="Фамилия *" name="last_name">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="single-form">
+                                    <input type="text" placeholder="Страна *" name="country">
+                                </div>
+                            </div>
+
+                            {% if delivery == 'house' %}
+                                <div class="col-sm-12">
+                                    <div class="single-form">
+                                        <label class="form-label">Адрес</label>
+                                        <input type="text" placeholder="Улица *" name="street">
+                                        <input type="text" placeholder="Квартира, люкс, блок и т.д. (по желанию)" name="apartment">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="single-form">
+                                        <input type="text" placeholder="Город *" name="city">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <div class="single-form">
+                                        <input type="number" placeholder="Почтовый индекс/ZIP *" name="postcode">
+                                    </div>
+                                </div>
+                            {% else %}
+                            <p/>
+                                <div class="col-sm-12">
+                                    <label for="warehouse" class="form-label">Выберите склад:</label>
+                                    <select name="warehouse" id="warehouse">
+                                        {% for warehouse in warehouses %}
+                                            <option value="{{ warehouse.id }}">{{ warehouse.city }} (Адрес: {{ warehouse.additional_address }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
+
+                            <div class="col-sm-6">
+                                <div class="single-form">
+                                    <input type="tel" placeholder="Телефон *" name="phone">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="single-form">
+                                    <input type="email" placeholder="Электронная почта (email) *" name="email">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="single-form checkout-note">
+                            <label class="form-label">Примечания к доставке</label>
+                            <textarea placeholder="Ваши особые указания по доставке." name="delivery_note"></textarea>
+                        </div>
+                    </div>
+                    <!-- Checkout Form End -->
+                </div>
+                <div class="col-lg-5">
+                    <div class="checkout-order">
+                        <div class="checkout-title">
+                            <h4 class="title">Твой заказ</h4>
+                        </div>
+
+                        <div class="checkout-order-table table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="Product-name">Продукты</th>
+                                        <th class="Product-price">Цена</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products %}
+                                    <tr>
+                                        <td class="Product-name" id='{{ product.article }}'>
+                                            <p>{{ product.product.name }} × {{ product.quantity }}</p>
+                                        </td>
+                                        <td class="Product-price">
+                                            <p>{{ product.product.price }}</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="Product-name">
+                                            <p>Доставка</p>
+                                        </td>
+                                        <td class="Product-price">
+                                            <ul class="shipping-list">
+                                                <li class="radio">
+                                                    <label>{% if delivery == 'house' %} На дом {% else %} Самовывоз {% endif %}</label>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="Product-name">
+                                            <p>Стоимость без доставки</p>
+                                        </td>
+                                        <td class="total-price">
+                                            <p>{{ final_cost }}</p>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="checkout-payment">
+                            <ul>
+                                <li>
+                                    <div class="single-payment">
+                                        <div class="payment-radio radio">
+                                            {% for payment_type in payment_types %}
+                                            <input type="radio" name="radio" id="{{ payment_type.0 }}">
+                                            <label for="{{ payment_type.0 }}"><span></span> {{ payment_type.1 }} </label>
+                                            <p/>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="single-form">
+                                <a class="btn btn-primary btn-hover-dark d-block" href="#">Оформить заказ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Checkout Section End -->
+{% endblock content %}

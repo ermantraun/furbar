@@ -15,7 +15,6 @@
 	});
 
     
-    
     $(document).ready(function() {
         // Edit comment
         $('.edit-comment').on('click', function(e) {

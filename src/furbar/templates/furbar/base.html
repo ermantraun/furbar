@@ -1,4 +1,5 @@
 {% load static %}
+{% csrf_token %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,9 +87,9 @@
                         <ul class="dropdown-menu dropdown-profile">
                             {% if request.user.is_authenticated %}
                             <li><a href="{% url 'profile' %}">Мой аккаунт</a></li>
-                            <li><a href="{% url 'profile' %}">Выйти</a></li>
+                            <li><a href="{% url 'logout' %}">Выйти</a></li>
                             {% else %}
-                            <li><a href="">Войти</a></li>
+                            <li><a href="{% url 'login' %}">Войти</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -148,9 +149,12 @@
                             <a class="action" href="#" role="button" data-bs-toggle="dropdown"><i class="pe-7s-user"></i></a>
 
                             <ul class="dropdown-menu dropdown-profile">
-                                <li><a href="{% url 'profile' %}">My Account</a></li>
-                                <li><a href="">Checkout</a></li>
-                                <li><a href="">Sign In</a></li>
+                                {% if request.user.is_authenticated %}
+                                <li><a href="{% url 'profile' %}">Мой аккаунт</a></li>
+                                <li><a href="{% url 'logout' %}">Выйти</a></li>
+                                {% else %}
+                                <li><a href="{% url 'login' %}">Войти</a></li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="dropdown">
@@ -195,14 +199,14 @@
 
     <!-- Canvas Action Start -->
     <div class="canvas-action">
-        <a class="action" href=""><i class="icon-sliders"></i> Compare <span class="action-num">(3)</span></a>
-        <a class="action" href=""><i class="icon-heart"></i> Wishlist <span class="action-num">(3)</span></a>
+        <a class="action" href="{% url 'basket' %}"><i class="icon-sliders"></i> Корзина <span class="action-num">({{ basket_products_count }})</span></a>
+        <a class="action" href="{% url 'wishlist' %}"><i class="icon-heart"></i> Избранное <span class="action-num"></span></a>
     </div>
     <!-- Canvas Action end -->
 
     <!-- Canvas Close bar Start -->
     <div class="canvas-close-bar">
-        <span>Menu</span>
+        <span>Меню</span>
         <a class="menu-close" href="javascript:;"><i class="pe-7s-angle-left"></i></a>
     </div>
     <!-- Canvas Close bar End -->
@@ -212,64 +216,22 @@
         <nav>
             <ul class="nav-menu">
                 <li>
-                    <a href="#">Home</a>
-                    <ul class="sub-menu">
-                        <li><a href="{% url 'index' %}">Home</a></li>
-                        
-                    </ul>
+                    <a href="{% url 'index' %}">Главная</a>
                 </li>
-                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'about' %}">О нас</a></li>
                 <li>
-                    <a href="#">Shop</a>
-                    <ul class="mega-sub-menu">
-                        <li>
-                            <a href="#" >Shop Grid</a>
-
-                            
-                        </li>
-                        <li>
-                            <a href="#" >Shop List</a>
-
-                            
-                        </li>
-                        <li>
-                            <a href="#">Shop Single</a>
-
-                            
-                        </li>
-                        <li>
-                            <a href="#">Page</a>
-
-                           
-                        </li>
-
-                        <li class="manu-banner">
-                            <a href="#"><img src="{% static 'furbar/images/banner-menu-01.jpg' %}" alt=""></a>
-                        </li>
-                        <li class="manu-banner">
-                            <a href="#"><img src="{% static 'furbar/images/banner-menu-02.jpg' %}" alt=""></a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Pages </a>
-                    <ul class="sub-menu">
-                        <li><a href="{% url 'about' %}">About Us</a></li>
-                        <li><a href="">Cart</a></li>
-                        <li><a href="">Compare</a></li>
-                        <li><a href="">Wishlist</a></li>
-                        <li><a href="">Empty Cart</a></li>
-                        <li><a href="">Checkout</a></li>
-                        <li><a href="{% url 'profile' %}">My Account</a></li>
-                        <li><a href="">Login</a></li>
-                        <li><a href="">Register</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Blog</a>
+                    <a href="{% url 'shop' %}">Магазин</a>
                     
                 </li>
-                <li><a href="{% url 'contacts' %}">contacts</a></li>
+                
+                <li>
+                    <a href="{% url 'blog' %}">Блог</a>
+                    
+                </li>
+                <li><a href="{% url 'contacts' %}">Контакты</a></li>
+                    </ul>
+                </li>
+               
             </ul>
 
         </nav>

@@ -3,13 +3,17 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from uuid import uuid4
-from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from imagekit.models import ImageSpecField
 from imagekit.processors import SmartResize
 from imagekit.models import ProcessedImageField
 from datetime import datetime, timedelta
 from django.utils import timezone 
 from random import sample
+import string
+import secrets
+
+
 def upload_file_path(instance, file_name):
     ext = file_name.split('.')[-1]
     date = datetime.now()
@@ -20,24 +24,37 @@ def upload_file_path(instance, file_name):
     file_path = '{}/{}/{}/{}.{}'.format(year, month, day, name, ext)
     return file_path
 
+
+def generate_coupon_value(length=8):
+    alphabet = string.ascii_uppercase + string.digits  # символы, используемые для генерации кода
+    coupon_code = ''.join(secrets.choice(alphabet) for _ in range(length))  # случайный выбор символов
+    return coupon_code
+
+
 class CustomUserManager(UserManager):
     def create_user(self, **kwargs):
         basket = Basket()
         wishlist = WishList()
+        buy = Buy()
         basket.save()
         wishlist.save()
+        buy.save()
         kwargs['basket'] = basket
         kwargs['wishlist'] = wishlist
+        kwargs['buy'] = buy
         user = super().create_user(**kwargs)
         return user
 
     def create_superuser(self, **kwargs):
         basket = Basket()
         wishlist = WishList()
+        buy = Buy()
         basket.save()
         wishlist.save()
+        buy.save()
         kwargs['basket'] = basket
         kwargs['wishlist'] = wishlist
+        kwargs['buy'] = buy
         user = super().create_superuser(**kwargs)
         return user
 
@@ -129,11 +146,28 @@ class Discount(models.Model):
         
         return expiring_discounts_products, no_expiring_discounts
     
+
+class Coupon(models.Model):
+    code = models.CharField(max_length=8, unique=True, blank=True, default=generate_coupon_value, primary_key=True)
+    discount_amount = models.SmallIntegerField()
+    is_persent_discount = models.BooleanField(default=True)
+    expiration_date = models.DateField()
+    max_usage_quantity = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(1)])
+    usage_quantity = models.IntegerField(null=True, blank=True)
+    def coupon_expired(self):
+        if self.expiration_date < timezone.now().date():
+            return True
+        else:
+            return False
+
+    def is_valid(self):
+        if self.coupon_expired() or self.usage_quantity >= self.max_usage_quantity:
+            return False
+        
+        return True
     
 class ProductTag(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    
-
 
 class Product(models.Model):
     name = models.CharField(max_length=500, unique=True)
@@ -155,7 +189,7 @@ class Product(models.Model):
         related_products = Product.objects.filter(tags__name__in=tags).exclude(id=self.id)
         return related_products[0:count]
     
-    def commentsAllowed(self, user):
+    def comments_allowed(self, user):
         if (user.is_authenticated and self in user.buy.products.all() and 
             self.comments.filter(user=user).count() < 1):
             return True
@@ -229,7 +263,10 @@ class Product(models.Model):
         
         
         return products
-            
+
+
+    
+     
 class Supply(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='supplies')
     quantity = models.PositiveIntegerField()
@@ -268,11 +305,17 @@ class WishList(models.Model):
 
 class Basket(models.Model):
     products = models.ManyToManyField(Product)
+
+    
+    
     @property
     def cost(self):
         cost = 0
         for product in self.products.all():
-            cost += product.price
+            if product.has_discount:
+                cost += product.discounted_price
+            else:
+                cost += product.price
         return cost   
     
 
@@ -286,7 +329,7 @@ class Comment(models.Model):
     vote = models.SmallIntegerField()
     text = models.TextField(default='')
 
-    def editAllowed(self, user):
+    def edit_allowed(self, user):
         if user == self.user:
             return True
         else:
@@ -297,21 +340,53 @@ class Comment(models.Model):
         if user.is_authenticated:
             return ctype.comments.filter(user=user)
 
+class WareHouse(models.Model):
+    city = models.CharField(max_length=120)
+    additional_address = models.CharField(max_length=120)
+    
+
+
 class Order(models.Model):
+    PAYMENT_STATUS_CHOICES = [('paid', 'paid'), ('unpaid', 'unpaid') ]
+    
     date = models.DateField(auto_now_add=True)
     cost = models.IntegerField()
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="orders")
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
-    country = models.CharField(max_length=120)
-    city = models.CharField(max_length=120) 
+    phone = models.CharField(max_length=20)
+    products = models.ManyToManyField(Product, through="OrderProduct")
+    notes = models.CharField(max_length=500, default='')
+    payment_status = models.CharField(max_length=30, default='unpaid', choices=PAYMENT_STATUS_CHOICES)
+    @staticmethod
+    def ordering_allowed(user):
+        if user.is_authenticated:
+            return True
+        else:
+            return False
+
+
+ 
+class HouseOrder(Order):
+    PERMENT_TYPE_CHOISES = [('online', 'Оплата онлайн')] 
+    
+    country = models.CharField(max_length=120, default='')
+    city = models.CharField(max_length=120, default='') 
     street_name = models.CharField(max_length=120, default='')
     postcode = models.CharField(max_length=20, default='')  
     additional_address_details = models.CharField(max_length=500, default='')  
-    phone = models.CharField(max_length=20)
-    products = models.ManyToManyField(Product, through="OrderProduct")
+    payment_type = models.CharField(max_length=30, default='online', choices=PERMENT_TYPE_CHOISES)
 
+
+
+class TakeAwayOrder(Order):
+    PERMENT_TYPE_CHOISES = [('online', 'Оплата онлайн'), ('on_receipt', 'Оплата при получении')]
+    
+    warehouse = models.OneToOneField(WareHouse, on_delete=models.CASCADE)
+    payment_type = models.CharField(max_length=30, default='online', choices=PERMENT_TYPE_CHOISES)
+    
+    
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

@@ -1,4 +1,4 @@
-from .models import Basket, WishList, Product
+from .models import Basket, WishList
 def shop(get_response):
     
     def middleware(request):

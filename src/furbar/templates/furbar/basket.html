@@ -1,0 +1,368 @@
+{% extends "furbar/base.html" %}
+{% load static %}
+{% block title %} Корзина {% endblock title %}
+{% block content %}
+    <!-- Секция баннера страницы -->
+    <div class="section page-banner-section" style="background-image: url({% static "furbar/images/page-banner.jpg" %});">
+        <div class="container">
+            <div class="page-banner-content">
+                <h2 class="title">Корзина</h2>
+                <ul class="breadcrumb">
+                    <li><a href="{% url "index" %}">Домой</a></li>
+                    <li class="active">Корзина</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="section section-padding">
+        <div class="container">
+            <div class="cart-wrapper">
+                <div class="cart-table table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="product-thumb">Изображение</th>
+                                <th class="product-info">Информация о товаре</th>
+                                <th class="product-quantity">Количество</th>
+                                <th class="product-total-price">Итоговая цена</th>
+                                <th class="product-action">Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in basket %}
+                            <tr data-article="{{ product.article }}">
+                                <td class="product-thumb">
+                                    <img src="{{ product.first_image.preview.url }}" alt="Изображение товара">
+                                </td>
+                                <td class="product-info" id="{{ product.article }}">
+                                    <h6 class="name"><a href="{% url "product-details" article=product.article %}">{{product.name}}</a></h6>
+                                    <div class="product-prices">
+                                        {% if product.has_discount %}
+                                            <span id='old-price' value="{{ product.discounted_price }}" ></span>
+                                            <span class="sale-price">{{ product.discounted_price }}₽</span> &nbsp;
+                                            <span class="old-price"><strike>{{ product.price }}</strike></span>
+                                            <span id="price-for-one" data-price="{{ product.discounted_price }}"></span>
+
+                                        {% else %}
+                                            <span id='old-price' value="{{ product.price }}"></span>
+                                            <span class="sale-price">{{ product.price }}</span>
+                                            <span id="price-for-one" data-price="{{ product.price }}"></span>
+
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-size-color">
+                                        <p>{{product.truncated_description}}</p>
+                                    </div>
+                                </td>
+                                <td class="quantity">
+                                    <div class="product-quantity d-inline-flex">
+                                        <button type="button" class="sub">-</button>
+                                        <input type="text" class="quantity-input" value="1" />
+                                        <button type="button" class="add">+</button>
+                                    </div>
+                                </td>
+                                <td class="product-total-price">
+                                    {% if product.has_discount %}
+                                    <span class="sale-price" id="xui12">{{ product.discounted_price }}₽</span> &nbsp;
+                                    <span class="old-price"><strike>{{ product.price }}</strike></span>
+                                    {% else %}
+                                        <span class="sale-price" id="xui12">{{ product.price }}₽</span>
+                                    {% endif %}
+
+                                </td>
+                                <td class="product-action">
+                                    <a href="{% url "basket_delete" article=product.article %}" class="remove"><i class="pe-7s-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cart-btn">
+                    <div class="left-btn">
+                        <a href="{% url "shop" %}" class="btn btn-dark btn-hover-primary">Продолжить покупки</a>
+                    </div>
+                    <div class="right-btn">
+                        <a href="{% url "empty_basket" %}" class="btn btn-outline-dark">Очистить корзину</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="cart-shipping">
+                        <div class="cart-title">
+                            <h4 class="title">Рассчитать доставку</h4>
+                            <p>Оцените стоимость доставки на дом *</p>
+                        </div>
+                        <div class="cart-form">
+                            <p>Рассчитать доставку</p>
+                            <form id="delivery-cost-form" action="{% url "check_delivery_cost" %}">
+                                <div class="single-form">
+                                    <input id="postal-code" class="form-control" type="text" placeholder="Почтовый индекс/ZIP">
+                                </div>
+                                <div class="single-form">
+                                    <button type="button" id="check-delivery" class="btn btn-dark btn-hover-primary">Проверить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cart-shipping">
+                        <div class="cart-title">
+                            <h4 class="title">Промокод</h4>
+                            <p>Введите свой промокод, если у вас есть.</p>
+                        </div>
+                        <div class="cart-form">
+                            <form id="coupon-form" action="{% url "check_coupon" %}">
+                                <div class="single-form">
+                                    <input id="coupon-code" class="form-control" type="text" placeholder="Введите свой промокод..">
+                                </div>
+                                <div class="single-form">
+                                    <button type="button" id="apply-coupon" class="btn btn-dark btn-hover-primary">Применить промокод</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cart-totals">
+                        <div class="cart-title">
+                            <h4 class="title">Итоги корзины</h4>
+                        </div>
+                        <div class="cart-total-table">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <p class="value">Стоимость без доставки</p>
+                                        </td>
+                                        <td>
+                                            <p class="price" id="xui123">{{ request.user.basket.cost }}₽</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p class="value">Купон</p>
+                                            <span class='couponCode' data-value=""/>
+                                        </td>
+                                        <td>
+                                            <p id="coupon">-0₽</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p class="value">Доставка</p>
+                                        </td>
+                                        <td>
+                                            <ul class="shipping-list">
+                                                <li class="radio">
+                                                    <input type="radio" name="shipping" id="house" checked="">
+                                                    <label for="house"><span></span> На дом </label>
+                                                </li>
+                                                <li class="radio">
+                                                    <input type="radio" name="shipping" id="takeaway">
+                                                    <label for="takeaway"><span></span> Самовывоз</label>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="cart-total-btn">
+                            <button id="checkout" class="btn btn-dark btn-hover-primary btn-block">Перейти к оформлению заказа</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+    $(document).ready(function() {
+
+        $('#apply-coupon').on('click', function() {
+            var couponCode = $('#coupon-code').val();
+            var text = $('#xui123').text();
+            var cleanedText = text.replace('₽', '').trim();
+            var basketCost = parseFloat(cleanedText);
+            console.log('Basket Cost:', basketCost);
+            
+            $.get("{% url 'check_coupon' %}", { coupon: couponCode, cost: basketCost }, function(response) {
+                if (response.error) {
+                    alert("Купон не действителен");
+                } else {
+                    // Assuming you have a <span> element with class 'couponCode'
+                    document.querySelector('.couponCode').setAttribute('data-value', couponCode);
+                    
+                    $('#coupon').text('-' + response.discount + '₽');
+                    alert("Купон добавлен");
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 400) {
+                    alert("Ошибка: Неверный запрос. Пожалуйста, проверьте введенные данные и попробуйте снова.");
+                } else {
+                    alert("Произошла ошибка при выполнении запроса. Пожалуйста, попробуйте позже.");
+                }
+            });
+        });
+    
+        // Update delivery cost
+        $('#check-delivery').on('click', function() {
+            var postalCode = $('#postal-code').val();
+            $.get("{% url 'check_coupon' %}", { coupon: couponCode, cost: basketCost }, function(response) {
+                if (response.error) {
+                    alert("Купон не действителен");
+                } else {
+                    // Assuming you have a <span> element with class 'couponCode'
+                    document.querySelector('.couponCode').setAttribute('data-value', couponCode);
+                    
+                    $('#coupon').text('-' + response.discount + '₽');
+                    alert("Купон добавлен");
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 400) {
+                    alert("Ошибка: Неверный запрос. Пожалуйста, проверьте введенные данные и попробуйте снова.");
+                } else {
+                    alert("Произошла ошибка при выполнении запроса. Пожалуйста, попробуйте позже.");
+                }
+            });
+        });
+    
+        // Update quantity and total price
+        $('.add').on('click', function() {
+            var $input = $(this).siblings('.quantity-input');
+            var quantity = parseInt($input.attr('value'), 10); // Берем значение из атрибута value
+    
+            if (isNaN(quantity)) {
+                alert('Некорректное значение количества');
+                return;
+            }
+    
+            quantity += 1;
+            $input.attr('value', quantity); // Обновляем атрибут value
+            $input.change();
+        });
+    
+        // Обработка нажатия кнопки уменьшения
+        $('.sub').on('click', function() {
+            var $input = $(this).siblings('.quantity-input');
+            var quantity = parseInt($input.attr('value'), 10); // Берем значение из атрибута value
+    
+            if (isNaN(quantity) || quantity <= 1) {
+                alert('Некорректное значение количества');
+                return;
+            }
+    
+            quantity -= 1;
+            $input.attr('value', quantity); // Обновляем атрибут value
+            $input.change();
+        });
+    
+        // Обработка изменения значения в поле ввода
+        $('.quantity-input').on('change', function() {
+            var $input = $(this);
+            var quantity = parseInt($input.attr('value'), 10); // Берем значение из атрибута value
+            console.log('Quantity:', quantity); // Для отладки
+    
+            if (isNaN(quantity) || quantity < 1) {
+                alert('Некорректное значение количества');
+                return;
+            }
+            
+            var $row = $input.closest('tr');
+            var priceForOne = parseFloat($row.find('#price-for-one').data('price'));
+            console.log('Price for one:', priceForOne); // Для отладки
+    
+            if (isNaN(priceForOne)) {
+                alert('Некорректное значение цены');
+                return;
+            }
+    
+            var totalPrice = (quantity * priceForOne).toFixed(0);
+            console.log('Total Price:', totalPrice); // Для отладки
+    
+            $('#xui12').text(totalPrice + '₽');
+            $('#xui123').text(totalPrice + '₽');
+        });
+
+    
+        // Checkout
+        $('#checkout').on('click', function() {
+            var products = [];
+        
+            // Собираем данные о продуктах
+            $('tbody tr').each(function() {
+                var article = $(this).data('article');
+                var quantity = $(this).find('.quantity-input').val();
+        
+                // Проверяем, что артикль и количество определены и не пусты
+                if (article !== undefined && quantity !== undefined && article !== '' && quantity !== '') {
+                    products.push({ 'article': article, 'quantity': quantity});
+                }
+            });
+        
+            // Проверяем, что есть хотя бы один товар для заказа
+            if (products.length === 0) {
+                alert('Добавьте товары в корзину перед оформлением заказа.');
+                return;
+            }
+        
+            // Получаем выбранный способ доставки
+            var shipping = $('input[name="shipping"]:checked').attr('id');
+        
+            // Получаем значение купона
+            var coupon = $('.couponCode').attr('data-value') || null;
+        
+            // Получаем CSRF токен
+            var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+        
+            // Создаем форму для отправки данных
+            var form = $('<form>', {
+                'method': 'POST',
+                'action': "{% url 'order' %}"
+                 // Укажите URL для обработки заказа
+            });
+            form.append($('<input>', {
+                'type': 'hidden',
+                'name': 'csrfmiddlewaretoken',
+                'value': '{{ csrf_token }}' // Убедитесь, что csrf_token передан в контекст шаблона
+            }));
+            // Добавляем скрытые поля с данными
+            $('<input>').attr({
+                'type': 'hidden',
+                'name': 'products',
+                'value': JSON.stringify(products)
+            }).appendTo(form);
+        
+            $('<input>').attr({
+                'type': 'hidden',
+                'name': 'delivery',
+                'value': shipping
+            }).appendTo(form);
+        
+            if (coupon) {
+                $('<input>').attr({
+                    'type': 'hidden',
+                    'name': 'coupon',
+                    'value': coupon
+                }).appendTo(form);
+            }
+        
+            // Добавляем CSRF токен
+            
+        
+
+            form.appendTo('body').submit();
+
+        });
+        
+        
+    });
+    </script>
+    
+    <!-- Конец секции корзины покупок -->
+{% endblock content %}
+

@@ -1,24 +1,33 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from . import models
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from .apps import FurbarConfig
 from django import apps
-def parse_get_params(request, params_names):
+import json
+def parse_params(request, params_names, method='GET'):
     params = {}
+    if method == 'GET':
+        data_source = request.GET
+    elif method == 'POST':
+        data_source = request.POST
+    else:
+        raise ValueError("Unsupported method. Only 'GET' and 'POST' are supported.")
+
     for name in params_names:
         if name.endswith('[]'):
-            if name in request.GET:
-                params[name] = request.GET.getlist(name)
+            if name in data_source:
+                params[name] = data_source.getlist(name)
         else:
-            if name in request.GET:
-                params[name] = request.GET.get(name)
-    
+            if name in data_source:
+                params[name] = data_source.get(name)
     
     return params
 
-def validate_params(params, validators, common_validator):
+def base_common_validator(params):
+    return params
+def validate_params(params, validators, common_validator=base_common_validator):
 
     for key, value in params.items():
         if key in validators:
@@ -96,8 +105,17 @@ def index(request):
 def profile(request):
     return HttpResponse("This is the profile page")
 
+def login(request):
+    return HttpResponse("This is the login page")
+
+def register(request):
+    return HttpResponse("This is the register page")
+
 def basket(request):
-    pass
+    
+    return render(request, "furbar/basket.html", context={
+        
+    })
 
 def basket_add(request, article):
     
@@ -105,7 +123,7 @@ def basket_add(request, article):
     product = get_object_or_404(models.Product, article=article)
     if product not in request.user.basket.products.all():
         request.user.basket.products.add(product)
-    return HttpResponse("ok")
+    return redirect('basket')
 
 def basket_delete(request, article):
     
@@ -113,7 +131,11 @@ def basket_delete(request, article):
     product = get_object_or_404(models.Product, article=article)
     if product in request.user.basket.products.all():
         request.user.basket.products.remove(product)
-    return HttpResponse("ok")
+    return redirect('basket')
+
+def empty_basket(request):
+    request.user.basket.products.clear()
+    return redirect('basket')
 def wishlist(request):
     
     
@@ -126,13 +148,18 @@ def wishlist_add(request, article):
     product = get_object_or_404(models.Product, article=article)
     if product not in request.user.wishlist.products.all():
         request.user.wishlist.products.add(product)
-    return HttpResponse("ok")
+    return redirect('wishlist')
 
 def wishlist_delete(request, article):
     product = get_object_or_404(models.Product, article=article)
     if product in request.user.wishlist.products.all():
         request.user.wishlist.products.remove(product)
-    return HttpResponse("ok")
+    return redirect('wishlist')
+
+def empty_wishlist(request):
+    request.user.wishlist.products.clear()
+    return redirect('wishlist')
+
 def mailing(request):
     pass
 
@@ -218,7 +245,7 @@ def shop(request):
     page = 1
     params_names = ['category','manufacturer', 'tags[]','min_price','max_price','sort_by', 'sort_order', 'page']
     if request.GET:
-        params = parse_get_params(request, params_names)
+        params = parse_params(request, params_names, 'GET')
         if params:
             if not validate_params(params, shop_params_validators, common_shop_params_validator):
                 return HttpResponseBadRequest('Неверный запрос')
@@ -271,47 +298,48 @@ def shop(request):
 
 
 def add_comment(request):
-    model_name = request.POST.get('model').split()[0].lower()
-    obj_id = request.POST.get('obj_id')
-    if model_name is not None and obj_id is not None:
-        c_type = get_object_or_404(ContentType, model=model_name, app_label=FurbarConfig.name)
-        model = apps.apps.get_model(FurbarConfig.name, model_name)
-        obj = get_object_or_404(model, id=obj_id)
-        
-        if request.method == 'POST' and obj.commentsAllowed(request.user):
-            vote = request.POST.get('vote')
-            if vote:
-                vote = int(vote[0])
-                if vote >= 1 and vote <= 5:
-                    vote = int((vote / 5) * 100)
-                    text = request.POST.get('text', '')
-                    
-                    images = request.FILES.getlist('images[]', [])
-                    
-                    
-                    comment = models.Comment(content_type=c_type, object_id=obj_id, user=request.user, 
-                                    vote=vote, text=text)
-                    comment.save()
-                    
-                    if images:
-                        for image in images[0:4]:
-
-                            models.CommentImage(comment=comment, large=image).save()
-                    
-                    response = {
-                        "username": request.user.username,
-                        "username_image": request.user.image.preview.url,
-                        "date": comment.date.strftime('%B %d, %Y'),
-                        "vote": comment.vote,
-                        "comment_id": comment.id,
-                        "text": comment.text,
-                        "images_url": [{'preview_url': image.preview.url, 'large_url': image.large.url} 
-                                    for image in comment.images.all()]
-                        
-                    }
-                    return JsonResponse(response)
+    if request.method == 'POST':
+        model_name = request.POST.get('model').split()[0].lower()
+        obj_id = request.POST.get('obj_id')
+        if model_name is not None and obj_id is not None:
+            c_type = get_object_or_404(ContentType, model=model_name, app_label=FurbarConfig.name)
+            model = apps.apps.get_model(FurbarConfig.name, model_name)
+            obj = get_object_or_404(model, id=obj_id)
             
-    return JsonResponse({'status': 'fail'})
+            if request.method == 'POST' and obj.comments_allowed(request.user):
+                vote = request.POST.get('vote')
+                if vote:
+                    vote = int(vote[0])
+                    if vote >= 1 and vote <= 5:
+                        vote = int((vote / 5) * 100)
+                        text = request.POST.get('text', '')
+                        
+                        images = request.FILES.getlist('images[]', [])
+                        
+                        
+                        comment = models.Comment(content_type=c_type, object_id=obj_id, user=request.user, 
+                                        vote=vote, text=text)
+                        comment.save()
+                        
+                        if images:
+                            for image in images[0:4]:
+
+                                models.CommentImage(comment=comment, large=image).save()
+                        
+                        response = {
+                            "username": request.user.username,
+                            "username_image": request.user.image.preview.url,
+                            "date": comment.date.strftime('%B %d, %Y'),
+                            "vote": comment.vote,
+                            "comment_id": comment.id,
+                            "text": comment.text,
+                            "images_url": [{'preview_url': image.preview.url, 'large_url': image.large.url} 
+                                        for image in comment.images.all()]
+                            
+                        }
+                        return JsonResponse(response, status=200)
+            
+    return JsonResponse(status=400)
 
 def edit_comment(request):
     if request.method == 'POST':
@@ -319,35 +347,218 @@ def edit_comment(request):
         text = request.POST.get('text')
         if comment_id is not None and text is not None:
             comment = get_object_or_404(models.Comment, id=comment_id)
-            if comment.editAllowed(request.user):
+            if comment.edit_allowed(request.user):
                 comment.text = text
                 comment.save()
-                return JsonResponse({'text': text})
+                return JsonResponse({'text': text}, status=200)
             
-    return JsonResponse({'status': 'fail'})
+    return JsonResponse(status=400)
 def del_comment(request):
     if request.method == 'POST':
         comment_id = request.POST.get('comment_id')
         if comment_id is not None:
             comment = get_object_or_404(models.Comment, id=comment_id)
-            if comment.editAllowed(request.user):
+            if comment.edit_allowed(request.user):
                 comment.delete()
                 
-                return JsonResponse({'status': 'ok'})
+                return JsonResponse({}, status=200)
             
-    return JsonResponse({'status': 'fail'})
+    return JsonResponse(status=400)
+
+def calculate_delivery_cost(postal_code):
+    return 1000
+
+def check_delivery_cost(request):
+    if request.method == 'GET':
+         postal_code = request.GET.get('postal_code')
+         if postal_code is not None:
+             try:
+                 postal_code = int(postal_code)
+             except ValueError:
+                 return JsonResponse(status=400)
+             
+             return JsonResponse({'cost':calculate_delivery_cost(postal_code)}, status=200)
+
+            
+    return JsonResponse(status=400)
+
+def check_coupon(request):
+    
+    if request.method == 'GET':
+        coupon = request.GET.get('coupon')
+        cost = request.GET.get('cost')
+        
+        try:
+            cost = int(cost)
+        except ValueError:
+            return JsonResponse(status=400)
+        
+        if coupon is not None and cost is not None:
+            
+            try:
+                coupon = models.Coupon.objects.get(pk=coupon)
+            except models.Coupon.DoesNotExist:
+                return JsonResponse(status=400)
+            
+            if coupon.is_valid():
+                if coupon.is_persent_discount:
+
+                    discount = (cost // 100) * coupon.discount_amount
+                    return JsonResponse({'discount': discount, 'couponCode': coupon.code}, status=200)
+                else:
+                    return JsonResponse({'discount': coupon.discount_amount, 'couponCode': coupon.code}, status=200)
+            else:
+                return JsonResponse(status=400)
+            
+            
+    return JsonResponse(status=400)
+
+
+def validate_order_products(products):
+    products = json.loads(products)
+    
+    if isinstance(products, list):
+        for product in products:
+            if isinstance(product, dict):
+                article = product.get('article')
+                quantity = product.get('quantity')
+                if not ((article is not None and is_convertible_to_number(article)) and \
+                    (quantity is not None and is_convertible_to_number(quantity))):
+                        return False
+            else:
+                return False
+    return True
+        
+
+order_params_validators = {
+    'delivery': lambda delivery: delivery in ['takeaway', 'house'],
+    'products': validate_order_products
+    
+}
+
+def logout(request):
+    pass
+
+def get_order_products(products):
+    products_instances = []
+    for product in products:
+        article = int(product['article'])
+        quantity = int(product['quantity'])
+        
+        product = get_object_or_404(models.Product, article=article)
+        
+        if product.quantity_available < quantity:
+            return HttpResponseBadRequest('Недостаточно на складе товара: ' + product.name + '<br>' +
+                                        'Вы запросили: ' + str(quantity) + '<br>' +
+                                        'На складе: ' + str(product.quantity_available) + '<br>' +
+                                        'Пожалуйста, попробуйте заказать позднее')
+        
+        products_instances.append({'product': product, 'quantity': quantity})
+    return products_instances
+
+def get_order_final_cost(products):
+    final_cost = 0
+    for product in products:
+        final_cost += product['product'].price * product['quantity']
+    return final_cost
+def order(request):
+    if request.method != 'POST' :
+        return HttpResponseBadRequest('Неверный запрос')
+    
+    
+    if not (models.Order.ordering_allowed(request.user)):
+        return redirect('login')
+    
+    products = request.POST.get('products', '[{}]')
+    delivery = request.POST.get('delivery', None)
+    coupon = request.POST.get('coupon', None)
+    
+    if not validate_params({'products': products, 'delivery': delivery}, order_params_validators):
+        return HttpResponseBadRequest('Неверный запрос')
+    
+    products = get_order_products(json.loads(products))
+    
+    if isinstance(products, HttpResponseBadRequest):
+        return products
+        
+    final_cost = get_order_final_cost(products)
+    
+
+    if delivery == 'house':
+        payment_types = models.HouseOrder.PERMENT_TYPE_CHOISES
+        warehouses = None
+    else:
+        payment_types = models.TakeAwayOrder.PERMENT_TYPE_CHOISES
+        warehouses = models.WareHouse.objects.all()
+        
+    return render(request, 'furbar/order.html', {'products': products, 'final_cost': final_cost, 
+                                                 'delivery':delivery, 'coupon': coupon, 
+                                                 'payment_types': payment_types, 'warehouses': warehouses})
+
+
+def check_required_params_present(request_params, order_params):
+    missing_params = [param for param, required in order_params.items() if required and param not in request_params]
+    return missing_params
+def place_order(request):
+    general_params_required = {
+    'first_name': True,
+    'last_name': True,
+    'country': False,  
+    'phone': True,
+    'email': True,
+    'delivery': True,
+    'products': True,  
+    'payment_type': True,
+    }
+
+    house_delivery_params_required = {
+        'street': True,
+        'apartment': False,  
+        'city': True,
+        'postcode': True
+    }
+
+    takeaway_delivery_params_required = {
+        'warehouse': True
+    }
+
+    
+    
+    params = json.loads(request.body)
+
+
+    delivery = params.get('delivery', '')
+    
+    if delivery == 'house':
+        full_params_required = {**general_params_required, **house_delivery_params_required}
+        
+        
+    elif delivery == 'warehouse': 
+        full_params_required = {**general_params_required, **takeaway_delivery_params_required}
+        
+    elif delivery == '':
+ 
+        return JsonResponse({}, status=400)
+    
+    for param, isRequired  in full_params_required.items():
+            if isRequired and param not in params:
+                return JsonResponse({}, status=400)
+            else:
+                print(True)
+    
+    return JsonResponse({}, status=200)
 
 def product(request, article):
     
     product = get_object_or_404(models.Product, article=article)
     user_comments = models.Comment.getUserComments(product, request.user)
-    commentsAllowed = product.commentsAllowed(request.user)
+    comments_allowed = product.comments_allowed(request.user)
     related_products = product.related_products(15)
     
     return render(request, "furbar/product-details.html", {
         'product':product,
         'user_comments': user_comments,
-        'commentsAllowed': commentsAllowed,
+        'comments_allowed': comments_allowed,
         'related_products': related_products
     })
 
